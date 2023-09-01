@@ -1,4 +1,4 @@
-# HR_WEBAPP
+# HR_Tracking_WebApplication
 This program is designed to track a few things:
 - Roster of employees
 - Employee Holidays
