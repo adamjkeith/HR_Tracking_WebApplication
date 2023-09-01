@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>HR Recruitment</title>
+  <link rel="icon" href="logo.ico" type="image/x-icon">
+  <style>
+/* Add this CSS to make the entire page responsive */
+body {
+  background-color: lightgray;
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 20px;
+  opacity: 0;
+  transition: opacity 1s ease;
+  overflow-x: hidden;
+  max-width: 100%;
+}
+
+
+/* Adjust font size for smaller screens if needed */
+@media (max-width: 768px) {
+  body {
+    font-size: 16px; /* Adjust font size for smaller screens */
+  }
+}
+
+
+    .fade-in {
+      opacity: 1;
+    }
+
+    h1 {
+      color: red;
+      z-index: 9999;
+      margin: 5% 15% 16% 16%;
+      font-style: bold;
+    }
+
+    .logo {
+      max-width: 300px;
+      left: 12%;
+      top: 20%;
+      position: relative;
+    }
+
+    .form-container {
+      max-width: 400px;
+      margin: 0 auto;
+      text-align: center;
+      margin-top: 50px;
+      opacity: 1;
+      transition: opacity 1s ease;
+    }
+
+    .fade-out {
+      opacity: 0;
+    }
+
+    .form-container label {
+      display: block;
+      margin-bottom: 10px;
+    }
+
+    .form-container input[type="text"] {
+      width: 100%;
+      padding: 12px;
+      font-size: 18px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      margin-bottom: 15px;
+    }
+
+    .form-container button[type="submit"] {
+      background-color: red;
+      color: white;
+      border: none;
+      cursor: pointer;
+      padding: 10px 20px;
+      font-size: 18px;
+      border-radius: 20px;
+      transition: background-color 0.3s ease;
+      box-shadow: 0 3px 0 rgba(0, 0, 0, 0.2);
+    }
+
+    .form-container button[type="submit"]:hover {
+      background-color: #ff4444;
+    }
+
+    .back-button {
+      position: fixed;
+      top: 4%;
+      right: 10%;
+      z-index: 21;
+    }
+
+    .back-button button {
+      background-color: white;
+      color: black;
+      border: none;
+      cursor: pointer;
+      padding: 8px 16px;
+      font-size: 18px;
+      border-radius: 10px;
+      transition: background-color 0.3s ease;
+      box-shadow: 0 3px 0 rgba(0, 0, 0, 0.2);
+
+    }
+
+    .back-button button:hover {
+      background-color: #e0e0e0;
+    }
+
+
+    #overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black overlay */
+      z-index: 9998; /* Set a z-index lower than the logout warning */
+      backdrop-filter: blur(5px); /* Apply the blur effect */
+    }
+
+    /* Styles for the warning screen */
+    #logout-warning {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      padding: 20px;
+      border: 4px solid black;
+      background-color: #f7f7f7;
+      z-index: 9999;
+    }
+
+    /* Customize the appearance of the cancel button */
+    #cancel-button {
+      background-color: #ff0000;
+      color: #fff;
+      border: none;
+      padding: 10px 20px;
+      cursor: pointer;
+    }
+
+    #canel-button:hover {
+      background-color: #cc0000;
+    }
+
+    /* Styles for the countdown timer */ 
+    #countdown {
+      font-size: 24px;
+      font-weight: bold;
+    }
+
+    #logout-warning button:hover {
+      background-color: #cc0000;
+
+    }
+
+    .headerBackground {
+      background-color: #aaaaaa;
+      height: 100px;
+      width: 60%;
+      position: fixed;
+      top: 0;
+      right: 0;
+      margin: 0;
+      z-index: 20;
+    }
+
+    .logoBackground {
+      background-color: #eeeeee;
+      height: 100px;
+      width: 40%;
+      position: fixed;
+      top: 0;
+      left: 0;
+      margin: 0;
+      z-index: 20;
+    }
+
+    .buttons-background {
+      background-color: #eeeeee;
+      height: 50px;
+      width: 110%;
+      top: 80px;
+      outline: black solid 1px;
+      position: fixed;
+      left: -5%;
+      place-items: center;
+      display: grid;
+      margin-bottom: 50px;
+      margin-top: 20px;
+      z-index: 20;
+    }
+    
+    .buttons-background button {
+      background-color: red;
+      border: none;
+      cursor: pointer;
+      padding: 8px 16px;
+      font-size: 18px;
+      border-radius: 10px;
+      transition: background-color 0.3s ease;
+      box-shadow: 0 3px 0 rgba(0, 0, 0, 0.2);
+      color: white;
+      margin: 0 100px;
+    }
+
+    .buttons-background button:hover {
+      background-color: #ff4444;
+      zoom: 1.1;
+    }
+
+    .buttons-background button.active {
+      background-color: #aa4444;
+      zoom: 1.1;
+      text-decoration: underline;
+      cursor: not-allowed;
+
+    }
+
+    .logo:hover {
+      cursor: pointer;
+    }
+
+    .dev {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      padding: 20px;
+      border: 4px solid black;
+      background-color: #f7f7f7;
+      z-index: 9999;
+      text-align: center;
+    }
+
+    .dev h1 {
+      font-size: 50px;
+      font-weight: bold;
+    }
+    .vacancies-container {
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    width: 80%;
+    max-width: 600px;
+    box-shadow: #aaaaaa 0px 0px 10px 0px;
+  }
+  .vacancy {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    padding: 10px;
+    background-color: #f9f9f9;
+    border-radius: 5px;
+  }
+  .vacancy-details {
+    flex: 1;
+  }
+  .vacancy-button {
+    background-color: #ff5555;
+    color: #ffffff;
+    border: none;
+    border-radius: 5px;
+    padding: 5px 10px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin: 0 200px;
+  }
+
+  .vacancy-button:hover {
+    background-color: #ff4444;
+    box-shadow: #aaaaaa 0px 0px 10px 0px;
+  }
+    
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    window.addEventListener("load", function() {
+      var body = document.querySelector("body");
+      body.classList.add("fade-in");
+    });
+  </script>
+</head>
+<body>
+
+
+
+  <!-- Logout Warning Screen -->
+ <div id="logout-warning">
+  <h3>Logout Warning!</h3>
+  <p>You will be logged out in <span id="countdown">60</span> seconds.</p>
+  <button id="cancel-button">Cancel</button>
+</div>
+
+  <!-- Logout Warning Screen -->
+  <div id="logout-warning">
+    <h3>Logout Warning!</h3>
+    <p>You will be logged out in <span id="countdown">60</span> seconds.</p>
+    <button id="cancel-button">Cancel</button>
+  </div>
+
+  <!-- Blur Overlay -->
+  <div id="overlay"></div>
+
+  <script>
+    // Timer variables
+    let warningTimer;
+    let countdownValue = 60;
+    const countdownElement = document.getElementById('countdown');
+
+    // Show the logout warning after 5 minutes (300,000 ms) of page load
+    setTimeout(showLogoutWarning, 300000);
+
+    // Function to show the logout warning
+    function showLogoutWarning() {
+      document.getElementById('logout-warning').style.display = 'block';
+      document.getElementById('overlay').style.display = 'block'; // Show the blur overlay
+      countdownElement.textContent = countdownValue;
+
+      // Start the countdown
+      warningTimer = setInterval(updateCountdown, 1000);
+    }
+
+    // Function to update the countdown value and redirect if it reaches 0
+    function updateCountdown() {
+      countdownValue--;
+      countdownElement.textContent = countdownValue;
+
+      if (countdownValue <= 0) {
+        clearInterval(warningTimer);
+        window.location.href = 'login page';
+      }
+    }
+
+    // Function to reset the timer when the cancel button is clicked
+    document.getElementById('cancel-button').addEventListener('click', function () {
+      clearInterval(warningTimer);
+      countdownValue = 60;
+      countdownElement.textContent = countdownValue;
+      document.getElementById('logout-warning').style.display = 'none';
+      document.getElementById('overlay').style.display = 'none'; // Hide the blur overlay
+
+      // Restart the 5-minute timer
+      setTimeout(showLogoutWarning, 300000);
+    });
+  </script>
+
+
+
+  <div class="back-button">
+    <button onclick="navigateToLoadingScreen()">Back to trackers menu</button>
+  </div> 
+  <div class="logoBackground">
+  <img class="logo" onclick="navigateToDash()" src="logo.png" alt="Logo">
+  </div>
+  <div class ="headerBackground">
+  <h1>HR Recruitment</h1>
+  </div>
+  <div class="buttons-background">
+    <div class="buttons">
+    <button onclick="navigateToDash()">Dashboard</button>
+    <button onclick="navigateToEmployees()">Employees</button>
+    <button class="active">Recruitment</button>
+    </div>
+  </div>
+  
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<div class="vacancies-container">
+  <h2>Vacancies</h2>
+  
+  <div class="vacancy">
+    <div class="vacancy-details">
+      <h3>Service Shaft</h3>
+      <p>Current Vacancies: 5</p>
+    </div>
+  </div>
+  <div class="vacancy">
+    <div class="vacancy-details">
+      <h3>Production Shaft</h3>
+      <p>Current Vacancies: 3</p>
+    </div>
+
+  </div>
+  <div class="vacancy">
+    <div class="vacancy-details">
+      <h3>M&E</h3>
+      <p>Current Vacancies: 2</p>
+    </div>
+
+  </div>
+
+  <div class="vacancy">
+    <div class="vacancy-details">
+      <h3>HR</h3>
+      <p>Current Vacancies: 1</p>
+    </div>
+  </div>
+  <h2>Total: 15</h2>
+  <button onclick="alert('NewEmployee Request Clicked')" class="vacancy-button">ADD NEW EMPLOYEE</button>
+  <br>
+  <br>
+  <div class="chart-container">
+    <canvas id="vacanciesChart"></canvas>
+  </div>
+</div>
+
+
+<script>
+  // Sample data for the pie chart
+  const departmentLabels = ['Service Shaft', 'Production Shaft', 'M&E', 'HR'];
+  const vacanciesData = [5, 3, 2, 1];
+  const backgroundColors = [
+    'rgba(255, 85, 85, 0.7)',
+    'rgba(85, 255, 85, 0.7)',
+    'rgba(85, 85, 255, 0.7)',
+    'rgba(255, 165, 0, 0.7)'
+  ];
+  
+  // Get the chart canvas element
+  const vacanciesChartCanvas = document.getElementById('vacanciesChart');
+  
+  // Create the chart
+  const vacanciesChart = new Chart(vacanciesChartCanvas, {
+    type: 'pie',
+    data: {
+      labels: departmentLabels,
+      datasets: [{
+        data: vacanciesData,
+        backgroundColor: backgroundColors,
+        borderWidth: 1
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false
+    }
+  });
+  </script>
+
+
+<div class="ichartBack">
+  <h2>Interviews</h2>
+  <br>
+<div class="ichart-container">
+  <canvas id="interviewChart" width="400" height="610"></canvas>
+</div>
+</div>
+<style>
+
+  .ichartBack {
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    height: auto;
+    width: 80%;
+    max-width: 600px;
+    box-shadow: #aaaaaa 0px 0px 10px 0px;
+    position: absolute;
+    top: 165px;
+    left: 35.6%;
+  }
+
+  .ichartBack h2 {
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  .ichart-container {
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  .ichart-container canvas {
+    width: 100% !important;
+  }
+
+
+</style>
+<script>
+  const ctx = document.getElementById('interviewChart').getContext('2d');
+  const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+  const plannedInterviews = [8, 12, 15, 14, 10, 20, 22, 18, 14, 10, 12, 18]; // Number of planned interviews for each month
+  const conductedInterviews = [6, 10, 12, 10, 8, 18, 20, 16, 12, 8, 10, 16]; // Number of conducted interviews for each month
+  const backgroundColorPlanned = 'rgba(54, 162, 235, 0.5)'; // Color for planned interview bars
+  const backgroundColorConducted = 'rgba(255, 99, 132, 0.5)'; // Color for conducted interview bars
+
+  const barChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: months,
+      datasets: [{
+        label: 'Planned Interviews',
+        data: plannedInterviews,
+        backgroundColor: backgroundColorPlanned,
+        borderColor: backgroundColorPlanned,
+        borderWidth: 1,
+      }, {
+        label: 'Conducted Interviews',
+        data: conductedInterviews,
+        backgroundColor: backgroundColorConducted,
+        borderColor: backgroundColorConducted,
+        borderWidth: 1,
+      }],
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        y: {
+          beginAtZero: true,
+          title: {
+            display: true,
+            text: 'Number of Interviews',
+          },
+        },
+        x: {
+          title: {
+            display: true,
+            text: 'Months',
+          },
+        },
+      },
+      plugins: {
+        legend: {
+          display: true,
+        },
+      },
+    },
+  });
+</script>
+
+
+  
+<div class="oback">
+  <h2>Offers</h2>
+  <br>
+<div class="offer" data-status="Accepted">
+  <h2>Offer 1</h2>
+  <p>Name: Example Name</p>
+  <p>Department: Production Shaft</p>
+  <p>Last Updated: 25-NOV-2022</p>
+  <p>Status: Accepted</p>
+</div>
+
+<div class="offer" data-status="Declined">
+  <h2>Offer 2</h2>
+  <p>Name: Example Name</p>
+  <p>Department: Service Shaft</p>
+  <p>Last Updated: 05-JAN-2023</p>
+  <p>Status: Declined</p>
+</div>
+
+<div class="offer" data-status="Pending">
+  <h2>Offer 3</h2>
+  <p>Name: Example Name</p>
+  <p>Department: HR</p>
+  <p>Last Updated: 10-AUG-2023</p>
+  <p>Status: Pending</p>
+</div>
+
+<div class="ochart-container">
+  <canvas id="statusChart"></canvas>
+</div>
+</div>
+  <style>
+    
+    .oback {
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    width: 80%;
+    max-width: 500px;
+    box-shadow: #aaaaaa 0px 0px 10px 0px;
+    position: absolute;
+    top: 170px;
+    left: 70%;
+  }
+
+  .oback h2 {
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  .offer {
+    background-color: #f9f9f9;
+    border-radius: 5px;
+    padding: 10px;
+    margin-bottom: 10px;
+  }
+
+  .offer h2 {
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  .offer p {
+    margin: 0 auto;
+    text-align: center;
+  }
+    
+    
+  </style>
+  <script>
+    const ctx2 = document.getElementById('statusChart').getContext('2d');
+    const statusChart = new Chart(ctx2, {
+      type: 'pie',
+      data: {
+        labels: ['Accepted', 'Declined', 'Pending'],
+        datasets: [{
+          data: [0, 0, 0], // Initial values
+          backgroundColor: ['green', 'red', 'orange'],
+        }],
+      },
+    });
+    
+    const offerElements = document.querySelectorAll('.offer');
+    offerElements.forEach(offer => {
+      const status = offer.getAttribute('data-status');
+      updateChart(status);
+    });
+    
+    function updateChart(status) {
+      const chartData = statusChart.data.datasets[0].data;
+      switch (status) {
+        case 'Accepted':
+          chartData[0]++;
+          break;
+        case 'Declined':
+          chartData[1]++;
+          break;
+        case 'Pending':
+          chartData[2]++;
+          break;
+      }
+      statusChart.update();
+    }
+  </script>
+
+
+
+  <!--Start of Tawk.to Script-->
+  <script type="text/javascript">
+   
+    </script>
+  <!--End of Tawk.to Script-->
+</body>
+
+</html>
+
+
+<script>
+  function setCookies() {
+    // Get the values from the input fields
+    var firstName = document.getElementById("firstname").value;
+    var surname = document.getElementById("surname").value;
+
+    // Set the cookies with expiration date in 30 days
+    document.cookie = "rfName=" + firstName + "; expires=" + getCookieExpirationDate(30);
+    document.cookie = "rsName=" + surname + "; expires=" + getCookieExpirationDate(30);
+
+    // Redirect to the searching.html page
+    searchForm();
+  }
+
+  // Function to calculate the expiration date for the cookie
+  function getCookieExpirationDate(days) {
+    var date = new Date();
+    date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+    return date.toUTCString();
+  }
+
+
+        function getCookie(name) {
+            var value = "; " + document.cookie;
+            var parts = value.split("; " + name + "=");
+            if (parts.length === 2) return parts.pop().split(";").shift();
+        }
+
+</script>
+<script>
+  function navigateToLoadingScreen() {
+    var body = document.querySelector("body");
+    var elements = document.querySelectorAll("body *");
+
+    for (var i = 0; i < elements.length; i++) {
+      elements[i].style.transition = "opacity 1s ease";
+      elements[i].style.opacity = 0;
+    }
+
+    body.style.transition = "background-color 1s ease";
+    body.style.backgroundColor = "lightgray";
+
+    setTimeout(function() {
+      window.location.href = "/en/loadingTrackers/loading_screen.html";
+    }, 1000);
+  }
+
+  function searchForm() {
+    var formContainer = document.querySelector(".form-container");
+    formContainer.classList.add("fade-out");
+    setTimeout(function() {
+      window.location.href = "searching.html";
+    }, 1000);
+  }
+
+  window.addEventListener("load", function() {
+    var body = document.querySelector("body");
+    body.classList.add("fade-in");
+  });
+
+
+
+  function navigateToEmployees() {
+    var body = document.querySelector("body");
+    var elements = document.querySelectorAll("body *");
+
+    for (var i = 0; i < elements.length; i++) {
+      elements[i].style.transition = "opacity 1s ease";
+      elements[i].style.opacity = 0;
+    }
+
+    body.style.transition = "background-color 1s ease";
+    body.style.backgroundColor = "lightgray";
+
+    setTimeout(function() {
+      window.location.href = "/en/hr/employees.html";
+    }, 1000);
+  }
+
+  function navigateToRecruit() {
+    var body = document.querySelector("body");
+    var elements = document.querySelectorAll("body *");
+
+    for (var i = 0; i < elements.length; i++) {
+      elements[i].style.transition = "opacity 1s ease";
+      elements[i].style.opacity = 0;
+    }
+
+    body.style.transition = "background-color 1s ease";
+    body.style.backgroundColor = "lightgray";
+
+    setTimeout(function() {
+      window.location.href = "/en/hr/recruitment.html";
+    }, 1000);
+  }
+
+  function navigateToSettings() {
+    var body = document.querySelector("body");
+    var elements = document.querySelectorAll("body *");
+
+    for (var i = 0; i < elements.length; i++) {
+      elements[i].style.transition = "opacity 1s ease";
+      elements[i].style.opacity = 0;
+    }
+
+    body.style.transition = "background-color 1s ease";
+    body.style.backgroundColor = "lightgray";
+
+    setTimeout(function() {
+      window.location.href = "/en/hr/settings.html";
+    }, 1000);
+  }
+  function navigateToDash() {
+    var body = document.querySelector("body");
+    var elements = document.querySelectorAll("body *");
+
+    for (var i = 0; i < elements.length; i++) {
+      elements[i].style.transition = "opacity 1s ease";
+      elements[i].style.opacity = 0;
+    }
+
+    body.style.transition = "background-color 1s ease";
+    body.style.backgroundColor = "lightgray";
+
+    setTimeout(function() {
+      window.location.href = "/en/hr/index.html";
+    }, 1000);
+  }
+
+  var userIDValue = getCookie("userID");
+        if (userIDValue == undefined) {
+          window.location.href = 'login page';
+        }
+
+        function getCookie(name) {
+            var value = "; " + document.cookie;
+            var parts = value.split("; " + name + "=");
+            if (parts.length === 2) return parts.pop().split(";").shift();
+        }
+
+</script>
