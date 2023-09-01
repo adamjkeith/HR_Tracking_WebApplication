@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Editing Lookup</title>
+  <link rel="icon" href="logo.ico" type="image/x-icon">
+  <style>
+    body {
+      background-color: lightgray;
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      zoom:1.2;
+    }
+
+    h1 {
+      color: red;
+      text-align: center;
+      margin-bottom: 10px;
+    }
+
+    .logo {
+      max-width: 400px;
+      margin: 0 auto; /* Center the logo horizontally */
+      display: block; /* Ensures the margin: 0 auto; works as expected */
+    }
+
+    .back-button {
+      position: absolute;
+      top: 100px; /* Adjust the top position as needed */
+      left: 4%; /* Adjust the right position as needed */
+    }
+
+    .back-button button {
+      background-color: white;
+      color: black;
+      border: none;
+      cursor: pointer;
+      padding: 8px 16px;
+      font-size: 18px;
+      border-radius: 10px;
+      transition: background-color 0.3s ease;
+      box-shadow: 0 3px 0 rgba(0, 0, 0, 0.2); /* Add box-shadow effect */
+    }
+
+    .back-button button:hover {
+      background-color: #e0e0e0;
+    }
+
+    @keyframes look-around {
+      0% {
+        transform: scaleX(-1) rotate(0deg) translate(0, 0);
+      }
+      12.5% {
+        transform: scaleX(-1) rotate(10deg) translate(60px, 0);
+      }
+      25% {
+        transform: scaleX(-1) rotate(-10deg) translate(60px, 60px);
+      }
+      37.5% {
+        transform: scaleX(-1) rotate(5deg) translate(0, 60px);
+      }
+      50% {
+        transform: scaleX(-1) rotate(0deg) translate(-60px, 60px);
+      }
+      62.5% {
+        transform: scaleX(-1) rotate(-5deg) translate(-60px, 0);
+      }
+      75% {
+        transform: scaleX(-1) rotate(-10deg) translate(-60px, -60px);
+      }
+      87.5% {
+        transform: scaleX(-1) rotate(-5deg) translate(0, -60px);
+      }
+      100% {
+        transform: scaleX(-1) rotate(0deg) translate(0, 0);
+      }
+    }
+  </style>
+  <script>
+    function navigateToIndex() {
+      var body = document.querySelector("body");
+      body.classList.add("fade-out");
+      setTimeout(function() {
+        window.location.href = "index.html";
+      });
+    }
+
+    function getRandomTime(min, max) {
+      return Math.floor(Math.random() * (max - min + 1) + min) * 1000; // Convert seconds to milliseconds
+    }
+
+    window.addEventListener("DOMContentLoaded", function() {
+      var randomTime = getRandomTime(2, 4);
+      setTimeout(function() {
+        window.location.href = "found.html";
+      }, randomTime);
+    });
+  </script>
+</head>
+<body>
+  <div class="back-button">
+    <button onclick="navigateToIndex()">Back</button>
+  </div>
+  <img class="logo" src="logo.png" alt="Logo">
+  <h1>Editing Lookup</h1>
+  <br>
+  <br>
+  <img src="mag.png" alt="Magnifying Glass" style="display: block; margin: 50px auto 0; max-width: 200px; transform: scaleX(-1); animation: look-around 8s infinite;">
+
+
+
+<script>
+function searchFlights() {
+  var firstName = getCookieValue("sFirstname");
+  var surname = getCookieValue("sSurname");
+
+  // Check if both cookies are available
+  if (firstName && surname) {
+    var xhr = new XMLHttpRequest();
+    var url = "newSearch.php";
+    var params = "firstname=" + encodeURIComponent(firstName) + "&surname=" + encodeURIComponent(surname);
+
+    xhr.onreadystatechange = function() {
+      if (xhr.readyState == XMLHttpRequest.DONE) {
+        if (xhr.status == 200) {
+          var response = xhr.responseText;
+          try {
+            var data = JSON.parse(response);
+
+            // Assuming the response contains the required data
+            console.log("Data from the server:", data);
+
+            // Store the data in corresponding cookies
+
+
+            console.log("Data stored in cookies.");
+          } catch (error) {
+            console.error("Error parsing JSON response:", error);
+          }
+        } else {
+          console.error("Error: Unable to fetch data from the server.");
+        }
+      }
+    };
+
+    xhr.open("GET", url + "?" + params, true);
+    xhr.send();
+  } else {
+    console.error("Error: sFirstname and/or sSurname cookies not found.");
+  }
+}
+
+
+  // Call the searchFlights function when the DOM content is loaded
+  window.addEventListener("DOMContentLoaded", function() {
+    searchFlights();
+  });
+  function getCookieValue(cookieName) {
+      var name = cookieName + "=";
+      var decodedCookie = decodeURIComponent(document.cookie);
+      var cookieArray = decodedCookie.split(";");
+  
+      for (var i = 0; i < cookieArray.length; i++) {
+        var cookie = cookieArray[i].trim();
+        if (cookie.indexOf(name) === 0) {
+          return cookie.substring(name.length, cookie.length);
+        }
+      }
+      return "";
+    }
+    var userIDValue = getCookie("userID");
+        if (userIDValue == undefined) {
+          window.location.href = 'login page';
+        }
+
+        function getCookie(name) {
+            var value = "; " + document.cookie;
+            var parts = value.split("; " + name + "=");
+            if (parts.length === 2) return parts.pop().split(";").shift();
+        }
+
+</script>
+</body>
+</html>
