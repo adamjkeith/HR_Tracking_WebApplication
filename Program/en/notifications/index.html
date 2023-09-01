@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Notifications</title>
+  <link rel="icon" href="logo.ico" type="image/x-icon">
+  <style>
+    body {
+      background-color: lightgray;
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      opacity: 0;
+      transition: opacity 1s ease;
+      zoom: 1.2;
+      overflow-x: hidden;
+    }
+
+    .fade-in {
+      opacity: 1;
+    }
+
+    h1 {
+      color: red;
+      text-align: center;
+      margin-bottom: 10px;
+    }
+
+    .logo {
+      max-width: 400px;
+      margin: 0 auto;
+      display: block;
+    }
+
+    .notification-feed {
+      max-width: 600px;
+      margin: 20px auto;
+    }
+
+    .notification {
+      background-color: white;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      padding: 10px;
+      margin-bottom: 10px;
+      position: relative;
+    }
+
+    .notification .title {
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+
+    .notification .details {
+      font-size: 14px;
+      line-height: 1.4;
+    }
+
+    .notification .timestamp {
+      font-size: 12px;
+      color: #888;
+      margin-top: 5px;
+    }
+
+    .notification .notification-time {
+      font-size: 12px;
+      color: #888;
+      position: absolute;
+      top: 10px;
+      right: 10px;
+    }
+
+    .notification .approval-icons {
+      position: absolute;
+      bottom: 10px;
+      right: 10px;
+    }
+
+    .notification .approval-icon {
+      font-size: 20px;
+      cursor: pointer;
+      margin-left: 5px;
+      transition: font-size 0.3s ease;
+    }
+
+    .notification .approval-icon:hover {
+      font-size: 24px;
+    }
+
+    .pending {
+      background-color: #ffc1c1;
+      color: #d80000;
+    }
+
+    .new-request {
+      background-color: #d8c1ff;
+      color: #5500ff;
+    }
+
+    .approved {
+      background-color: #e7ffe7;
+    }
+
+    .month-divider {
+      display: flex;
+      align-items: center;
+      margin-top: 20px;
+      margin-bottom: 10px;
+    }
+
+    .month-divider::before {
+      content: "";
+      flex-grow: 1;
+      height: 1px;
+      background-color: #000;
+      margin-right: 10px;
+    }
+
+    .back-button {
+      position: relative;
+      left:5%;
+      padding-top:3%;
+    }
+
+    .back-button button {
+      background-color: white;
+      color: black;
+      border: none;
+      cursor: pointer;
+      padding: 8px 16px;
+      font-size: 18px;
+      border-radius: 10px;
+      transition: background-color 0.3s ease;
+      box-shadow: 0 3px 0 rgba(0, 0, 0, 0.2);
+    }
+
+    .back-button button:hover {
+      background-color: #e0e0e0;
+    }
+    .manager {
+      font-size: 14px;
+    }
+
+    .mFilter {
+      position: relative;
+      left: 5%;
+      top: 5%;
+    }
+
+    .yFilter {
+      position: relative;
+      left: 5%;
+      top: 5%;
+    }
+
+    .tFilter {
+      position: relative;
+      left: 5%;
+      top: 5%;
+    }
+
+    .mFilter select {
+      font-size: 14px;
+      padding: 5px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      background-color: white;
+      cursor: pointer;
+    }
+
+    .yFilter select {
+      font-size: 14px;
+      padding: 5px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      background-color: white;
+      cursor: pointer;
+    }
+
+    .tFilter select {
+      font-size: 14px;
+      padding: 5px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      background-color: white;
+      cursor: pointer;
+    }
+
+    .mFilter label {
+      font-size: 14px;
+    }
+
+    .yFilter label {
+      font-size: 14px;
+    }
+
+    .tFilter label {
+      font-size: 14px;
+    }
+    
+  </style>
+  <script>
+    function sortNotificationsByDate() {
+      var notificationFeed = document.querySelector(".notification-feed");
+      var notifications = Array.from(notificationFeed.getElementsByClassName("notification"));
+
+      notifications.sort(function(a, b) {
+        var timestampA = new Date(a.dataset.timestamp).getTime();
+        var timestampB = new Date(b.dataset.timestamp).getTime();
+
+        return timestampB - timestampA;
+      });
+
+      notifications.forEach(function(notification) {
+        notificationFeed.appendChild(notification);
+      });
+    }
+
+    function initialize() {
+      sortNotificationsByDate();
+
+      var managerNameElements = document.querySelectorAll(".managerName");
+      var managerName = "Steve"; // Replace "Steve" with the desired manager's name variable
+
+      managerNameElements.forEach(function (element) {
+        element.textContent = managerName;
+      });
+
+      // Add month sections with year
+      var notificationFeed = document.querySelector(".notification-feed");
+      var notifications = Array.from(notificationFeed.getElementsByClassName("notification"));
+
+      var previousMonth = null;
+      var previousYear = null;
+
+      notifications.forEach(function (notification) {
+        var timestamp = new Date(notification.dataset.timestamp);
+        var month = timestamp.toLocaleString("default", { month: "long" });
+        var year = timestamp.getFullYear();
+
+        if (month !== previousMonth || year !== previousYear) {
+          var monthDivider = document.createElement("div");
+          monthDivider.classList.add("month-divider");
+          var line = document.createElement("div");
+          line.classList.add("month-divider-line");
+          monthDivider.appendChild(line);
+          var monthName = document.createElement("div");
+          monthName.classList.add("month-divider-name");
+          monthName.textContent = month + " " + year;
+          monthDivider.appendChild(monthName);
+          notificationFeed.insertBefore(monthDivider, notification);
+          previousMonth = month;
+          previousYear = year;
+        }
+      });
+    }
+
+    function navigateToLoadingScreen() {
+      var body = document.querySelector("body");
+      var elements = document.querySelectorAll("body *");
+
+      for (var i = 0; i < elements.length; i++) {
+        elements[i].style.transition = "opacity 1s ease";
+        elements[i].style.opacity = 0;
+      }
+
+      body.style.transition = "background-color 1s ease";
+      body.style.backgroundColor = "white";
+
+      setTimeout(function() {
+        window.location.href = "../loadingTrackers/loading_screen.html";
+      }, 1000);
+    }
+
+    function handleApprovalClick(event) {
+      console.log("Approval clicked!");
+      alert("Logcode: 00a001 - Holiday Approve Clicked");
+    }
+
+    function handleRejectionClick(event) {
+      console.log("Rejection clicked!");
+      alert("Logcode: 00a002 - Holiday Decline Clicked");
+    }
+
+    function handleFilterChange() {
+    var monthSelect = document.getElementById("monthSelect");
+    var yearSelect = document.getElementById("yearSelect");
+    var typeSelect = document.getElementById("typeSelect");
+
+    var selectedMonth = monthSelect.value;
+    var selectedYear = yearSelect.value;
+    var selectedType = typeSelect.value;
+
+    var notifications = document.querySelectorAll(".notification");
+
+    notifications.forEach(function (notification) {
+      var show = true;
+
+      // Check if the notification should be shown based on the selected filter options
+      if (selectedMonth !== "all") {
+        var timestamp = new Date(notification.dataset.timestamp);
+        var month = timestamp.toLocaleString("default", { month: "long" });
+        if (month !== selectedMonth) {
+          show = false;
+        }
+      }
+
+      if (selectedYear !== "all") {
+        var timestamp = new Date(notification.dataset.timestamp);
+        var year = timestamp.getFullYear();
+        if (year !== Number(selectedYear)) {
+          show = false;
+        }
+      }
+
+      if (selectedType !== "all") {
+        if (!notification.classList.contains(selectedType)) {
+          show = false;
+        }
+      }
+
+      // Show/hide the notification based on the filter result
+      if (show) {
+        notification.style.display = "block";
+        // Show the corresponding month divider
+        var monthDivider = notification.previousElementSibling;
+        if (monthDivider && monthDivider.classList.contains("month-divider")) {
+          monthDivider.style.display = "block";
+        }
+      } else {
+        notification.style.display = "none";
+        // Hide the corresponding month divider
+        var monthDivider = notification.previousElementSibling;
+        if (monthDivider && monthDivider.classList.contains("month-divider")) {
+          monthDivider.style.display = "none";
+        }
+      }
+    });
+  }
+
+    window.addEventListener("load", function() {
+      var body = document.querySelector("body");
+      body.classList.add("fade-in");
+    });
+
+    
+
+    function populateFilterOptions() {
+      var months = new Set();
+      var years = new Set();
+      var types = new Set();
+
+      var notifications = document.querySelectorAll(".notification");
+      notifications.forEach(function (notification) {
+        var timestamp = new Date(notification.dataset.timestamp);
+        var month = timestamp.toLocaleString("default", { month: "long" });
+        var year = timestamp.getFullYear();
+        var type = notification.classList[1];
+
+        months.add(month);
+        years.add(year);
+        types.add(type);
+      });
+
+      var monthSelect = document.getElementById("monthSelect");
+      var yearSelect = document.getElementById("yearSelect");
+      var typeSelect = document.getElementById("typeSelect");
+
+      months.forEach(function (month) {
+        var option = document.createElement("option");
+        option.value = month;
+        option.textContent = month;
+        monthSelect.appendChild(option);
+      });
+
+      years.forEach(function (year) {
+        var option = document.createElement("option");
+        option.value = year;
+        option.textContent = year;
+        yearSelect.appendChild(option);
+      });
+
+      types.forEach(function (type) {
+        var option = document.createElement("option");
+        option.value = type;
+        option.textContent = type.charAt(0).toUpperCase() + type.slice(1).replace("-", " ");
+        typeSelect.appendChild(option);
+      });
+    }
+
+
+    window.addEventListener("load", function () {
+      populateFilterOptions();
+    });
+  </script>
+</head>
+<body onload="initialize()">
+  <div class="back-button">
+    <button onclick="navigateToLoadingScreen()">Back</button>
+  </div>
+  <img class="logo" src="logo.png" alt="Logo">
+  <h1>Notifications</h1>
+
+  <div class="mFilter">
+    <label for="monthSelect">Filter by Month:</label>
+    <select id="monthSelect" onchange="handleFilterChange()">
+      <option value="all">All</option>
+    </select>
+  </div>
+
+  <br>
+
+  <div class="yFilter">
+    <label for="yearSelect">Filter by Year:</label>
+    <select id="yearSelect" onchange="handleFilterChange()">
+      <option value="all">All</option>
+    </select>
+  </div>
+
+  <br>
+
+  <div class="tFilter">
+    <label for="typeSelect">Filter by Type:</label>
+    <select id="typeSelect" onchange="handleFilterChange()">
+      <option value="all">All</option>
+    </select>
+  </div>
+
+  <div class="notification-feed">
+    <div class="notification new-request" data-timestamp="2023-07-18T08:30:00">
+      <div class="title">New Holiday Request</div>
+      <div class="details">
+        <div><strong>Name:</strong> Bob Bobbington</div>
+        <div><strong>Date from:</strong> July 20, 2023</div>
+        <div><strong>Date to:</strong> July 24, 2023</div>
+        <div><strong>Number of employees on holiday on date:</strong> July 5-9, 2023 - 5 employees</div>
+      </div>
+      <div class="timestamp">Submitted on July 18, 2023, 9:15 PM</div>
+      <div class="notification-time">Sent on July 19, 2023, 8:00 AM</div>
+      <div class="approval-icons">
+        <span class="approval-icon" onclick="handleApprovalClick()" onmouseover="this.style.fontSize='24px'" onmouseout="this.style.fontSize='20px'">&#10003;</span>
+        <span class="approval-icon" onclick="handleRejectionClick()" onmouseover="this.style.fontSize='24px'" onmouseout="this.style.fontSize='20px'">&#10007;</span>
+      </div>
+    </div>
+
+    <div class="notification pending" data-timestamp="2023-07-15T10:30:00">
+      <div class="title">Holiday Request</div>
+      <div class="details">Your holiday request for July 18 is pending approval.</div>
+      <div class="timestamp">Submitted on July 15, 2023, 10:30 AM</div>
+      <div class="notification-time">Sent on July 15, 2023, 10:30 AM</div>
+    </div>
+
+    <div class="notification approved" data-timestamp="2023-07-16T15:45:00">
+      <div class="title">Holiday Request</div>
+      <div class="details">Your holiday request for July 18 has been approved.</div>
+      <div class="timestamp">Approved on July 16, 2023, 3:45 PM</div>
+      <div class="notification-time">Sent on July 16, 2023, 3:45 PM</div>
+      <br>
+      <div class="manager">Approved by: <span class="managerName"></span></div>
+    </div>
+
+    <div class="notification pending" data-timestamp="2023-07-18T03:15:00">
+      <div class="title">Holiday Request</div>
+      <div class="details">Your holiday request for July 20-24 is pending approval.</div>
+      <div class="timestamp">Submitted on July 18, 2023, 3:15 AM</div>
+      <div class="notification-time">Sent on July 18, 2023, 3:15 AM</div>
+    </div>
+
+    <div class="notification pending" data-timestamp="2023-06-03T09:15:00">
+      <div class="title">Holiday Request</div>
+      <div class="details">Your holiday request for June 6-13 is pending approval.</div>
+      <div class="timestamp">Submitted on June 3, 2023, 9:15 AM</div>
+      <div class="notification-time">Sent on June 3, 2023, 9:15 AM</div>
+    </div>
+
+    <div class="notification approved" data-timestamp="2023-06-03T10:00:00">
+      <div class="title">Holiday Request</div>
+      <div class="details">Your holiday request for June 6-13 has been approved.</div>
+      <div class="timestamp">Approved on June 3, 2023, 10:00 PM</div>
+      <div class="notification-time">Sent on June 3, 2023, 10:00 PM</div>
+      <br>
+      <div class="manager">Approved by: <span class="managerName"></span></div>
+    </div>
+
+    <!-- Add more notifications here... -->
+
+  </div>
+  <script>
+    window.addEventListener("load", function() {
+      var body = document.querySelector("body");
+      body.classList.add("fade-in");
+    });
+  </script>
+</body>
+</html>
