@@ -18,3 +18,6 @@ THIS PROGRAM IS NOT INTENDED FOR GENERAL USE
 This program was designed and made by Adam Keith.
 
 AI was used to help write code faster but was prompted in detail and taught using code written by Adam Keith. (E.g. Here is my code, only change this word to something else)
+
+
+Some libraries were used to create this program, these are the general ones like: JQuery, Moment, fullcalender etc.
