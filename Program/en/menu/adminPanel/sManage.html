@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en-UK">
+<head>
+  <meta charset="utf-8">
+  <title>Manage Staff</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="logo.ico" type="image/x-icon">
+  <style>
+    body {
+      background-color: white;
+      color: black;
+      font-family: Arial, sans-serif;
+      font-size: 18px;
+      display: -ms-flexbox;
+      display: flex;
+      -ms-flex-direction: column;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+      padding: 0;
+    }
+
+    .change-password-container {
+      width: 80%; /* Adjust the width as needed */
+      max-width: 500px;
+      margin: 0 auto;
+      padding: 20px;
+      border: 1px solid lightgray;
+      border-radius: 5px;
+      background-color: white;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+      color: red;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    h2 {
+      color: red;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .logo {
+      width: 80%; /* Adjust the width as needed */
+      max-width: 300px;
+      display: block;
+      margin: 0 auto;
+      margin-bottom: 20px;
+    }
+
+    .input-label {
+      display: block;
+      margin-bottom: 10px;
+      font-size: 16px;
+      font-weight: bold;
+    }
+
+    .input-container {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+
+    .input-field {
+      width: 100%;
+      max-width: 400px; /* Adjust the max-width as needed */
+      padding: 10px;
+      font-size: 16px;
+      border: 1px solid lightgray;
+      border-radius: 5px;
+    }
+
+    .button-container {
+      display: flex;
+      justify-content: center;
+      margin-top: 20px;
+    }
+
+    .submit-button,
+    .back-button {
+      background-color: red;
+      color: white;
+      padding: 15px 30px;
+      border: none;
+      border-radius: 5px;
+      text-decoration: none;
+      font-weight: bold;
+      transition: background-color 0.3s ease, cursor 0.3s ease;
+      cursor: pointer;
+      font-size: 18px;
+    }
+
+    .submit-button:hover,
+    .back-button:hover {
+      background-color: darkred;
+    }
+
+    .back-button {
+      position: absolute;
+      top: 4%;
+      left: 5%;
+
+    }
+
+    .error-message {
+      color: red;
+      font-size: 14px;
+      margin-top: 5px;
+      text-align: center;
+    }
+    @keyframes fadeOutAnimation {
+      from {
+        opacity: 1;
+      }
+      to {
+        opacity: 0;
+      }
+    }
+
+    .fade-out {
+      animation: fadeOutAnimation 0.5s ease;
+      animation-fill-mode: forwards; /* Keep the opacity at 0 after the animation ends */
+    }
+
+    @keyframes fadeInAnimation {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+
+    .fade-in {
+      animation: fadeInAnimation 0.5s ease;
+    }
+  </style>
+</head>
+<body>
+  <a href="#" class="back-button" onclick="fadeOutScreen('../adminPanel/index.html')">Back</a>
+  <div class="change-password-container">
+    <img src="logo.png" alt="Logo" class="logo">
+    <h1>Manage Staff</h1>
+    <form id="change-password-form" onsubmit="return validateForm(event)">
+
+
+      <div class="input-container">
+        <div>
+          <label class="input-label" for="new-staff">Staff username</label>
+          <input type="input" id="new-staff" class="input-field" required>
+        </div>
+      </div>
+
+      <div class="error-message" id="error-message"></div>
+
+      <div class="button-container">
+        <button type="submit" class="submit-button">Create / Delete</button>
+      </div>
+    </form>
+  </div>
+
+  <script>
+
+
+function generateRandomEightDigitNumber() {
+  // Generate a random number between 10000000 and 99999999
+  const randomNumber = Math.floor(Math.random() * 90000000) + 10000000;
+  return randomNumber;
+}
+
+
+
+function validateForm(event) {
+  event.preventDefault();
+  const newStaff = document.getElementById('new-staff').value;
+  const errorMessage = document.getElementById('error-message');
+  const password = 'Welcome2RD';
+  const eightDigitNumber = generateRandomEightDigitNumber();
+  // Send data to PHP using Ajax
+  const xhr = new XMLHttpRequest();
+  xhr.open('POST', 'changeStaff.php', true);
+  xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+  xhr.onreadystatechange = function () {
+    if (xhr.readyState === XMLHttpRequest.DONE) {
+      console.log(xhr.responseText); // Add this line to log the response
+      if (xhr.status === 200) {
+        console.log(xhr.responseText);
+        const response = JSON.parse(xhr.responseText);
+        if (response.success) {
+          // Password change successful
+          alert(response.message);
+          fadeOutScreen('../adminPanel/sManage.html');
+        } else {
+          // Error handling
+          errorMessage.textContent = response.message;
+        }
+      } else {
+        errorMessage.textContent = "An error occurred. Please try again later.";
+      }
+    }
+  };
+
+  // Prepare data to send to PHP
+  const data = `staff=${newStaff}&password=${password}&userID=${eightDigitNumber}`;
+  xhr.send(data);
+}
+
+    function fadeOutScreen(url) {
+      // Add the "fade-out" class to the body element to start the fade-out animation
+      document.body.classList.add('fade-out');
+
+      // After the animation ends, redirect to the specified URL
+      setTimeout(function() {
+        window.location.href = url;
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+  // Get the userID cookie
+  var userIDValue = getCookie("userID");
+        if (userIDValue == undefined) {
+          window.location.href = 'login page';
+        }
+
+  // Add the userID to the form data object
+
+
+  // Store the formData object in a global variable for later use
+
+
+  // Apply the fade-in animation
+  document.body.classList.add('fade-in');
+});
+
+function getCookie(name) {
+  const value = "; " + document.cookie;
+  const parts = value.split("; " + name + "=");
+  if (parts.length === 2) return parts.pop().split(";").shift();
+}
+
+ var username = getCookie('staffPass');
+  </script>
+</body>
+</html>
