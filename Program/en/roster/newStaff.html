@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Roster Manage Staff</title>
+  <link rel="icon" href="logo.ico" type="image/x-icon">
+  <style>
+    body {
+      background-color: lightgray;
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      opacity: 0;
+      transition: opacity 1s ease;
+      zoom: 1.2;
+    }
+
+    .fade-in {
+      opacity: 1;
+    }
+
+    h1 {
+      color: red;
+      text-align: center;
+      margin-bottom: 10px;
+    }
+
+    .logo {
+      max-width: 400px;
+      margin: 0 auto;
+      display: block;
+    }
+
+    .form-container {
+      max-width: 400px;
+      margin: 0 auto;
+      text-align: center;
+      margin-top: 50px;
+      opacity: 1;
+      transition: opacity 1s ease;
+    }
+
+    .fade-out {
+      opacity: 0;
+    }
+
+    .form-container label {
+      display: block;
+      margin-bottom: 10px;
+    }
+
+    .form-container input[type="text"] {
+      width: 100%;
+      padding: 12px;
+      font-size: 18px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      margin-bottom: 15px;
+    }
+
+    .form-container button[type="submit"] {
+      background-color: red;
+      color: white;
+      border: none;
+      cursor: pointer;
+      padding: 10px 20px;
+      font-size: 18px;
+      border-radius: 20px;
+      transition: background-color 0.3s ease;
+      box-shadow: 0 3px 0 rgba(0, 0, 0, 0.2);
+    }
+
+    .form-container select{
+      width: 107%;
+      padding: 12px;
+      font-size: 18px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      margin-bottom: 15px;
+    }
+
+    .form-container button[type="submit"]:hover {
+      background-color: #ff4444;
+    }
+
+    .form-container input[type="text"] {
+      width: 100%;
+      padding: 12px;
+      font-size: 18px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      margin-bottom: 15px;
+    }
+
+    .form-container button[type="submit"] {
+      background-color: red;
+      color: white;
+      border: none;
+      cursor: pointer;
+      padding: 10px 20px;
+      font-size: 18px;
+      border-radius: 20px;
+      transition: background-color 0.3s ease;
+      box-shadow: 0 3px 0 rgba(0, 0, 0, 0.2);
+    }
+
+    .form-container button[type="submit"]:hover {
+      background-color: #ff4444;
+    }
+
+    .back-button {
+      position: absolute;
+      top: 10%;
+      left: 4%px;
+    }
+
+    .back-button button {
+      background-color: white;
+      color: black;
+      border: none;
+      cursor: pointer;
+      padding: 8px 16px;
+      font-size: 18px;
+      border-radius: 10px;
+      transition: background-color 0.3s ease;
+      box-shadow: 0 3px 0 rgba(0, 0, 0, 0.2);
+    }
+
+    .back-button button:hover {
+      background-color: #e0e0e0;
+    }
+    #overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black overlay */
+      z-index: 9998; /* Set a z-index lower than the logout warning */
+      backdrop-filter: blur(5px); /* Apply the blur effect */
+    }
+
+    /* Styles for the warning screen */
+    #logout-warning {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      padding: 20px;
+      border: 4px solid black;
+      background-color: #f7f7f7;
+      z-index: 9999;
+    }
+
+    /* Customize the appearance of the cancel button */
+    #cancel-button {
+      background-color: #ff0000;
+      color: #fff;
+      border: none;
+      padding: 10px 20px;
+      cursor: pointer;
+    }
+
+    #canel-button:hover {
+      background-color: #cc0000;
+    }
+
+    /* Styles for the countdown timer */ 
+    #countdown {
+      font-size: 24px;
+      font-weight: bold;
+    }
+
+    #logout-warning button:hover {
+      background-color: #cc0000;
+
+    }
+  </style>
+  <script>
+    function navigateToLoadingScreen() {
+      var body = document.querySelector("body");
+      var elements = document.querySelectorAll("body *");
+
+      for (var i = 0; i < elements.length; i++) {
+        elements[i].style.transition = "opacity 1s ease";
+        elements[i].style.opacity = 0;
+      }
+
+      body.style.transition = "background-color 1s ease";
+      body.style.backgroundColor = "lightgray";
+
+      setTimeout(function() {
+        window.location.href = "mindex.html";
+      }, 1000);
+    }
+
+    function navigateToSame() {
+      var body = document.querySelector("body");
+      var elements = document.querySelectorAll("body *");
+
+      for (var i = 0; i < elements.length; i++) {
+        elements[i].style.transition = "opacity 1s ease";
+        elements[i].style.opacity = 0;
+      }
+
+      body.style.transition = "background-color 1s ease";
+      body.style.backgroundColor = "lightgray";
+
+      setTimeout(function() {
+        window.location.href = "newStaff.html";
+      }, 100);
+    }
+
+
+    window.addEventListener("load", function() {
+      var body = document.querySelector("body");
+      body.classList.add("fade-in");
+    });
+  </script>
+</head>
+<body>
+
+
+
+  <!-- Logout Warning Screen -->
+ <div id="logout-warning">
+  <h3>Logout Warning!</h3>
+  <p>You will be logged out in <span id="countdown">60</span> seconds.</p>
+  <button id="cancel-button">Cancel</button>
+</div>
+
+  <!-- Logout Warning Screen -->
+  <div id="logout-warning">
+    <h3>Logout Warning!</h3>
+    <p>You will be logged out in <span id="countdown">60</span> seconds.</p>
+    <button id="cancel-button">Cancel</button>
+  </div>
+
+  <!-- Blur Overlay -->
+  <div id="overlay"></div>
+
+  <script>
+    // Timer variables
+    let warningTimer;
+    let countdownValue = 60;
+    const countdownElement = document.getElementById('countdown');
+
+    // Show the logout warning after 5 minutes (300,000 ms) of page load
+    setTimeout(showLogoutWarning, 300000);
+
+    // Function to show the logout warning
+    function showLogoutWarning() {
+      document.getElementById('logout-warning').style.display = 'block';
+      document.getElementById('overlay').style.display = 'block'; // Show the blur overlay
+      countdownElement.textContent = countdownValue;
+
+      // Start the countdown
+      warningTimer = setInterval(updateCountdown, 1000);
+    }
+
+    // Function to update the countdown value and redirect if it reaches 0
+    function updateCountdown() {
+      countdownValue--;
+      countdownElement.textContent = countdownValue;
+
+      if (countdownValue <= 0) {
+        clearInterval(warningTimer);
+        window.location.href = 'login page';
+      }
+    }
+
+    // Function to reset the timer when the cancel button is clicked
+    document.getElementById('cancel-button').addEventListener('click', function () {
+      clearInterval(warningTimer);
+      countdownValue = 60;
+      countdownElement.textContent = countdownValue;
+      document.getElementById('logout-warning').style.display = 'none';
+      document.getElementById('overlay').style.display = 'none'; // Hide the blur overlay
+
+      // Restart the 5-minute timer
+      setTimeout(showLogoutWarning, 300000);
+    });
+  </script>
+
+
+  <div class="back-button">
+    <button onclick="navigateToLoadingScreen()">Back</button>
+  </div>
+  <img class="logo" src="logo.png" alt="Logo">
+  <h1>Roster Manage Staff</h1>
+  
+  <div class="form-container">
+    <form onsubmit="event.preventDefault(); ajaxRequest();">
+      <label for="surname">Surname:</label>
+      <input type="text" id="surname" name="surname" placeholder="Enter surname" required>
+
+      <label for="firstname">First Name:</label>
+      <input type="text" id="firstname" name="firstname" placeholder="Enter first name" required>
+
+      <label for="entitlement">Entitlement (Required for New Staff):</label>
+      <select id="entitlement" name="entitlement">
+          <!-- Option list from 0 to 40 -->
+          <option value="0">0</option>
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+          <option value="5">5</option>
+          <option value="6">6</option>
+          <option value="7">7</option>
+          <option value="8">8</option>
+          <option value="9">9</option>
+          <option value="10">10</option>
+          <option value="11">11</option>
+          <option value="12">12</option>
+          <option value="13">13</option>
+          <option value="14">14</option>
+          <option value="15">15</option>
+          <option value="16">16</option>
+          <option value="17">17</option>
+          <option value="18">18</option>
+          <option value="19">19</option>
+          <option value="20">20</option>
+          <option value="21">21</option>
+          <option value="22">22</option>
+          <option value="23">23</option>
+          <option value="24">24</option>
+          <option value="25">25</option>
+          <option value="26">26</option>
+          <option value="27">27</option>
+          <option value="28">28</option>
+          <option value="29">29</option>
+          <option value="30">30</option>
+          <option value="31">31</option>
+          <option value="32">32</option>
+          <option value="33">33</option>
+          <option value="34">34</option>
+          <option value="35" selected>35</option>
+          <option value="36">36</option>
+          <option value="37">37</option>
+          <option value="38">38</option>
+          <option value="39">39</option>
+          <option value="40">40</option>
+      </select>
+      
+
+      <label for="roster">Roster (Required for New Staff):</label>
+      <input type="text" id="roster" name="roster" placeholder="Enter Roster">
+
+      <div style="text-align: center;">
+        <button type="submit">Create / Delete</button>
+      </div>
+    </form>
+  </div>
+  <!--Start of Tawk.to Script-->
+  <script type="text/javascript">
+   
+    </script>
+  <!--End of Tawk.to Script-->
+</body>
+
+</html>
+
+
+<!-- Your existing HTML code here -->
+
+<script>
+  function setCookies() {
+    // Get the values from the input fields
+    var firstName = document.getElementById("firstname").value;
+    var surname = document.getElementById("surname").value;
+
+    // Set the cookies with expiration date in 30 days
+    document.cookie = "rfName=" + firstName + "; expires=" + getCookieExpirationDate(30);
+    document.cookie = "rsName=" + surname + "; expires=" + getCookieExpirationDate(30);
+
+    // Redirect to the searching.html page
+    searchForm();
+  }
+
+  // Function to calculate the expiration date for the cookie
+  function getCookieExpirationDate(days) {
+    var date = new Date();
+    date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+    return date.toUTCString();
+  }
+
+
+  function ajaxRequest() {
+  // Get the form input values
+  var firstName = document.getElementById("firstname").value;
+  var surname = document.getElementById("surname").value;
+  var entitlement = document.getElementById("entitlement").value;
+  var roster = document.getElementById("roster").value;
+
+  // Create a new XMLHttpRequest object
+  var xhr = new XMLHttpRequest();
+
+  // Configure the request
+  xhr.open("POST", "manageStaff.php", true);
+  xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+
+  // Define the callback function when the request is complete
+  xhr.onreadystatechange = function() {
+    if (xhr.readyState === XMLHttpRequest.DONE) {
+      if (xhr.status === 200) {
+        // Request was successful, handle the response
+        var response = xhr.responseText;
+        alert(response); // Display the response message ("New Staff Added!" or "Staff Removed")
+        navigateToSame();
+      } else {
+        // Request failed
+        alert("An error occurred. Please try again later.");
+      }
+    }
+  };
+
+  // Prepare the form data to be sent in the request body
+  var formData = "firstName=" + encodeURIComponent(firstName) +
+                 "&surname=" + encodeURIComponent(surname) +
+                 "&entitlement=" + encodeURIComponent(entitlement) +
+                 "&roster=" + encodeURIComponent(roster);
+
+  // Send the request with the form data
+  xhr.send(formData);
+}
+
+
+var userIDValue = getCookie("userID");
+        if (userIDValue == undefined) {
+          window.location.href = 'login Page';
+        }
+
+        function getCookie(name) {
+            var value = "; " + document.cookie;
+            var parts = value.split("; " + name + "=");
+            if (parts.length === 2) return parts.pop().split(";").shift();
+        }
+
+</script>

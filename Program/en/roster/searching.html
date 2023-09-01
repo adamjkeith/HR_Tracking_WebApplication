@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Roster Lookup</title>
+  <link rel="icon" href="logo.ico" type="image/x-icon">
+  <style>
+    body {
+      background-color: lightgray;
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      zoom:1.2;
+    }
+
+    h1 {
+      color: red;
+      text-align: center;
+      margin-bottom: 10px;
+    }
+
+    .logo {
+      max-width: 400px;
+      margin: 0 auto; /* Center the logo horizontally */
+      display: block; /* Ensures the margin: 0 auto; works as expected */
+    }
+
+    .back-button {
+      position: absolute;
+      top: 10%; /* Adjust the top position as needed */
+      left: 4%px; /* Adjust the right position as needed */
+    }
+
+    .back-button button {
+      background-color: white;
+      color: black;
+      border: none;
+      cursor: pointer;
+      padding: 8px 16px;
+      font-size: 18px;
+      border-radius: 10px;
+      transition: background-color 0.3s ease;
+      box-shadow: 0 3px 0 rgba(0, 0, 0, 0.2); /* Add box-shadow effect */
+    }
+
+    .back-button button:hover {
+      background-color: #e0e0e0;
+    }
+
+    @keyframes look-around {
+      0% {
+        transform: scaleX(-1) rotate(0deg) translate(0, 0);
+      }
+      12.5% {
+        transform: scaleX(-1) rotate(10deg) translate(60px, 0);
+      }
+      25% {
+        transform: scaleX(-1) rotate(-10deg) translate(60px, 60px);
+      }
+      37.5% {
+        transform: scaleX(-1) rotate(5deg) translate(0, 60px);
+      }
+      50% {
+        transform: scaleX(-1) rotate(0deg) translate(-60px, 60px);
+      }
+      62.5% {
+        transform: scaleX(-1) rotate(-5deg) translate(-60px, 0);
+      }
+      75% {
+        transform: scaleX(-1) rotate(-10deg) translate(-60px, -60px);
+      }
+      87.5% {
+        transform: scaleX(-1) rotate(-5deg) translate(0, -60px);
+      }
+      100% {
+        transform: scaleX(-1) rotate(0deg) translate(0, 0);
+      }
+    }
+  </style>
+  <script>
+    function navigateToIndex() {
+      var body = document.querySelector("body");
+      body.classList.add("fade-out");
+      setTimeout(function() {
+        window.location.href = "index.html";
+      });
+    }
+
+    function getRandomTime(min, max) {
+      return Math.floor(Math.random() * (max - min + 1) + min) * 1000; // Convert seconds to milliseconds
+    }
+
+    window.addEventListener("DOMContentLoaded", function() {
+      var randomTime = getRandomTime(1, 4);
+      setTimeout(function() {
+        window.location.href = "found.html";
+      }, randomTime);
+    });
+  </script>
+</head>
+<body>
+  <div class="back-button">
+    <button onclick="navigateToIndex()">Back</button>
+  </div>
+  <img class="logo" src="logo.png" alt="Logo">
+  <h1>Roster Lookup</h1>
+  <br>
+  <br>
+  <img src="mag.png" alt="Magnifying Glass" style="display: block; margin: 50px auto 0; max-width: 200px; transform: scaleX(-1); animation: look-around 8s infinite;">
+</body>
+</html>
+
+<script>
+  function getRosterData() {
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function () {
+      if (this.readyState == 4 && this.status == 200) {
+        var responseData = JSON.parse(this.responseText);
+
+        // Check if data is not null
+        if (responseData !== null) {
+          // Set cookies with retrieved data
+          document.cookie = "dates=" + responseData.dates;
+          document.cookie = "hEntitlement=" + responseData.hEntitlement;
+          document.cookie = "sEntitlement=" + responseData.sEntitlement;
+          document.cookie = "manager=" + responseData.manager;
+          document.cookie = "rosterS=" + responseData.rosterS;
+        }
+      }
+    };
+    xhttp.open("GET", "getDates.php", true);
+    xhttp.send();
+  }
+
+  // Call the function to get data when the page loads
+  window.addEventListener("load", function () {
+    getRosterData();
+  });
+
+  var userIDValue = getCookie("userID");
+        if (userIDValue == undefined) {
+          window.location.href = 'login page';
+        }
+
+        function getCookie(name) {
+            var value = "; " + document.cookie;
+            var parts = value.split("; " + name + "=");
+            if (parts.length === 2) return parts.pop().split(";").shift();
+        }
+
+</script>

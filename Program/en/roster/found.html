@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Roster Lookup Found</title>
+  <link rel="icon" href="logo.ico" type="image/x-icon">
+  <style>
+    body {
+      background-color: lightgray;
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+    }
+
+    h1 {
+      color: red;
+      text-align: center;
+      margin-bottom: 10px;
+    }
+
+    p {
+      color: red;
+      text-align: center;
+      font-size: 30px;
+      margin-top: 10px;
+    }
+
+    .logo {
+      max-width: 400px;
+      margin: 0 auto; /* Center the logo horizontally */
+      display: block; /* Ensures the margin: 0 auto; works as expected */
+    }
+
+    .back-button {
+      position: absolute;
+      top: 10%; /* Adjust the top position as needed */
+      left: 4%; /* Adjust the right position as needed */
+    }
+
+    .back-button button {
+      background-color: white;
+      color: black;
+      border: none;
+      cursor: pointer;
+      padding: 8px 16px;
+      font-size: 18px;
+      border-radius: 10px;
+      transition: background-color 0.3s ease;
+      box-shadow: 0 3px 0 rgba(0, 0, 0, 0.2); /* Add box-shadow effect */
+    }
+
+    .back-button button:hover {
+      background-color: #e0e0e0;
+    }
+
+    #calendar {
+      margin-top: 20px;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+      background-color: white;
+      border: 1px solid black;
+    }
+
+    .fc-toolbar {
+      margin-bottom: 10px;
+    }
+
+    .fc-toolbar .fc-center {
+      text-align: center;
+    }
+
+    .fc-toolbar .custom-select {
+      font-size: 14px;
+      padding: 4px;
+    }
+
+    .fc-day-content {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      cursor: pointer;
+    }
+
+    .event-letter {
+      font-size: 20px;
+      font-weight: bold;
+      padding: 4px;
+      border-radius: 4px;
+    }
+
+    .letter-D {
+    background-color: #B1C897;
+    color: black; /* White text color */
+  }
+
+  .letter-O {
+    background-color: #EF483B; /* Light red */
+    color: black;
+  }
+
+  .letter-N {
+    background-color: #80C9EA;
+    color: black;
+  }
+
+  .letter-H {
+    background-color: #B06BBB;
+    color: black;
+  }
+
+  .letter-A {
+    background-color: darkorange;
+    color: black;
+  }
+
+  .letter-M {
+    background-color: orange;
+    color: black;
+  }
+
+  .letter-S{
+    background-color: red;
+    color: black;
+  }
+
+  .letter-T{
+    background-color: gray;
+    color: black;
+  }
+
+ /* Add some padding between elements */
+ label, select, button {
+    margin: 5px;
+  }
+
+  /* Style for the dropdowns */
+  select {
+    position: relative;
+    display: inline-block;
+    align-items: center;
+    justify-content: center;
+    padding: 5px;
+    font-size: 16px;
+  }
+
+  /* Style for the "Go" button */
+  button {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    cursor: pointer;
+    padding: 10px 20px;
+    font-size: 16px;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+    box-shadow: 0 3px 0 rgba(0, 0, 0, 0.2);
+  }
+
+  
+  .entitlements {
+    text-align: center;
+    height: 80%;
+    width: 40%;
+    background-color: white;
+    border: 1px solid black;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 20px;
+    color: black;
+
+  }
+
+  .entitlements p {
+    margin-top: 10px;
+    color: black;
+    font-size: 18px;
+  }
+
+  .dataEdit{
+    text-align: center;
+    height: 80%;
+    width: 40%;
+    background-color: white;
+    border: 1px solid black;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 20px;
+    color: black;
+  }
+
+  .dataEdit label {
+    margin-top: 10px;
+    color: black;
+    font-size: 18px;
+  }
+
+
+  #overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black overlay */
+      z-index: 9998; /* Set a z-index lower than the logout warning */
+      backdrop-filter: blur(5px); /* Apply the blur effect */
+    }
+
+    /* Styles for the warning screen */
+    #logout-warning {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      padding: 20px;
+      border: 4px solid black;
+      background-color: #f7f7f7;
+      z-index: 9999;
+    }
+
+    /* Customize the appearance of the cancel button */
+    #cancel-button {
+      background-color: #ff0000;
+      color: #fff;
+      border: none;
+      padding: 10px 20px;
+      cursor: pointer;
+    }
+
+    #canel-button:hover {
+      background-color: #cc0000;
+    }
+
+    /* Styles for the countdown timer */ 
+    #countdown {
+      font-size: 24px;
+      font-weight: bold;
+    }
+
+    #logout-warning button:hover {
+      background-color: #cc0000;
+
+    }
+
+    #logout-warning p{
+      color:black;
+    }
+
+  </style>
+  <link rel="stylesheet" href="fullcalendar.min.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+</head>
+
+
+  <!-- Logout Warning Screen -->
+  <div id="logout-warning">
+    <h3>Logout Warning!</h3>
+    <p>You will be logged out in <span id="countdown">60</span> seconds.</p>
+    <button id="cancel-button">Cancel</button>
+  </div>
+  
+    <!-- Logout Warning Screen -->
+    <div id="logout-warning">
+      <h3>Logout Warning!</h3>
+      <p>You will be logged out in <span id="countdown">60</span> seconds.</p>
+      <button id="cancel-button">Cancel</button>
+    </div>
+  
+    <!-- Blur Overlay -->
+    <div id="overlay"></div>
+  
+    <script>
+      // Timer variables
+      let warningTimer;
+      let countdownValue = 60;
+      const countdownElement = document.getElementById('countdown');
+  
+      // Show the logout warning after 5 minutes (300,000 ms) of page load
+      setTimeout(showLogoutWarning, 300000);
+  
+      // Function to show the logout warning
+      function showLogoutWarning() {
+        document.getElementById('logout-warning').style.display = 'block';
+        document.getElementById('overlay').style.display = 'block'; // Show the blur overlay
+        countdownElement.textContent = countdownValue;
+  
+        // Start the countdown
+        warningTimer = setInterval(updateCountdown, 1000);
+      }
+  
+      // Function to update the countdown value and redirect if it reaches 0
+      function updateCountdown() {
+        countdownValue--;
+        countdownElement.textContent = countdownValue;
+  
+        if (countdownValue <= 0) {
+          clearInterval(warningTimer);
+          window.location.href = 'login page';
+        }
+      }
+  
+      // Function to reset the timer when the cancel button is clicked
+      document.getElementById('cancel-button').addEventListener('click', function () {
+        clearInterval(warningTimer);
+        countdownValue = 60;
+        countdownElement.textContent = countdownValue;
+        document.getElementById('logout-warning').style.display = 'none';
+        document.getElementById('overlay').style.display = 'none'; // Hide the blur overlay
+  
+        // Restart the 5-minute timer
+        setTimeout(showLogoutWarning, 300000);
+      });
+    </script>
+
+<body>
+
+
+
+  <div class="back-button">
+    <button onclick="navigateToIndex()">Back</button>
+  </div>
+  
+  <img class="logo" src="logo.png" alt="Logo">
+  <h1>Roster Lookup</h1>
+  <p name="name">EXAMPLE NAME</p>
+  <div class="entitlements">
+  <p name="hEntitlement">Holiday Entitlement: </p>
+  <p name="booked">Holidays Booked/Taken: </p>
+  <p name="hRemaining">Holidays Remaining: </p>
+  </div>
+    <div id="calendar">
+    <label for="month">Select Month:</label>
+    <select id="month" onchange="selectYearAndMonth()">
+      <!-- Options for selecting months (values 1 to 12) -->
+      <option value="1">January</option>
+      <option value="2">February</option>
+      <option value="3">March</option>
+      <option value="4">April</option>
+      <option value="5">May</option>
+      <option value="6">June</option>
+      <option value="7">July</option>
+      <option value="8">August</option>
+      <option value="9">September</option>
+      <option value="10">October</option>
+      <option value="11">November</option>
+      <option value="12">December</option>
+    </select>
+    <label for="year">Select Year:</label>
+    <select id="year" onchange="selectYearAndMonth()">
+      <!-- Options for selecting years -->
+      <option value="2020">2020</option>
+      <option value="2021">2021</option>
+      <option value="2022">2022</option>
+      <option value="2023">2023</option>
+      <option value="2024">2024</option>
+      <option value="2025">2025</option>
+      <!-- Add more years as needed -->
+    </select>
+    <button onclick="selectYearAndMonth()">Go</button>
+  </div>
+
+
+
+
+
+
+  <div class="dataEdit">
+    <label>Edit Data:</label>
+    <input type="text" id="dateRangeInput" placeholder="Click To Select Date(s)" />
+    <button onclick="addLetterToCalendar()">Edit</button>
+  </div>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+  <!-- Include jQuery -->
+  <script src="jquery2.js"></script>
+
+  <!-- Include the Date Range Picker JavaScript file -->
+
+<script>
+  // Wait for the DOM to be ready
+  document.addEventListener("DOMContentLoaded", function() {
+    // Get the dateRangeInput element
+    const dateRangeInput = document.getElementById("dateRangeInput");
+
+    // Initialize the Flatpickr date range picker
+    flatpickr(dateRangeInput, {
+      mode: "range", // Enables date range selection
+      dateFormat: "d-m-Y", // The format of the selected date range
+    });
+  });
+</script>
+  
+  <br>
+  <br>
+  
+
+  
+    <script>
+    // Function to get the value of a cookie by its name
+    function getCookieValue(cookieName) {
+      const cookies = document.cookie.split("; ");
+      for (const cookie of cookies) {
+        const [name, value] = cookie.split("=");
+        if (name === cookieName) {
+          return decodeURIComponent(value);
+        }
+      }
+      return null;
+    }
+
+    // Get the values of cookies rfName and rsName
+    const rfName = getCookieValue("rfName");
+    const rsName = getCookieValue("rsName");
+
+    // Combine the values and set the <p name="name"> element
+    if (rfName && rsName) {
+      const fullName = rfName + " " + rsName;
+      const nameElement = document.querySelector('p[name="name"]');
+      nameElement.textContent = fullName;
+    }
+
+    // Get the value of the dates cookie and set datesData
+    const datesCookie = getCookieValue("dates");
+    const datesData = datesCookie ? datesCookie : "";
+
+  </script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+
+  <script src="jquery.min.js"></script>
+  <script src="moment.min.js"></script>
+  <script src="fullcalendar.min.js"></script>
+  <script>
+
+
+function countLetterH(events) {
+    let count = 0;
+    for (const event of events) {
+      if (event.title === 'H') {
+        count++;
+      }
+    }
+    return count;
+  }
+    // Sample dates stored in the variable (split after each letter)
+
+
+    function navigateToIndex() {
+      window.location.href = "index.html";
+    }
+
+    $(document).ready(function() {
+      var events = [];
+
+      // Splitting dates and letters using spaces after each letter
+      var dateArray = datesData.split(" ");
+      for (var i = 0; i < dateArray.length; i++) {
+        var dateString = dateArray[i].slice(0, 8); // Extract "YearMonthDay" part
+        var letter = dateArray[i].slice(8); // Extract the letter
+
+        // Create a moment object from the date string
+        var date = moment(dateString, "YYYYMMDD");
+
+        if (date.isValid()) {
+          events.push({
+            title: letter,
+            start: date.format('YYYY-MM-DD')
+          });
+        }
+      }
+
+      $('#calendar').fullCalendar({
+        headerToolbar: {
+  left: 'prev,today',
+  center: 'customTitle',
+  right: 'next',
+},
+eventAfterAllRender: function(view) {
+        const hCount = countLetterH(events);
+        const bookedElement = document.querySelector('p[name="booked"]');
+        bookedElement.textContent = `Booked Holidays: ${hCount}`;
+        entitlementCalc(hCount);
+      },
+
+
+
+
+
+      
+customButtons: {
+  customTitle: {
+    text: 'Select Month',
+    click: function() {
+      var year = moment().year();
+      var month = moment().month();
+
+      var selectYear = parseInt(prompt('Enter the year', year));
+      var selectMonth = parseInt(prompt('Enter the month (1-12)', month + 1));
+
+      if (!isNaN(selectYear) && !isNaN(selectMonth) && selectMonth >= 1 && selectMonth <= 12) {
+        $('#calendar').fullCalendar('gotoDate', selectYear, selectMonth - 1);
+      } else {
+        alert('Invalid year or month.');
+      }
+    }
+  },
+  customSelect: {
+    text: 'Select Year & Month',
+    click: function() {
+      var year = moment().year();
+      var month = moment().month();
+
+      var selectYear = parseInt(prompt('Enter the year', year));
+      var selectMonth = parseInt(prompt('Enter the month (1-12)', month + 1));
+
+      if (!isNaN(selectYear) && !isNaN(selectMonth) && selectMonth >= 1 && selectMonth <= 12) {
+        $('#calendar').fullCalendar('gotoDate', selectYear, selectMonth - 1);
+      } else {
+        alert('Invalid year or month.');
+      }
+    }
+  }
+},
+
+        defaultView: 'month',
+        weekends: true,
+        firstDay: 0, // Sunday
+        events: events,
+        eventRender: function(event, element) {
+          element.find('.fc-content').html('<div translate="no" class="event-letter letter-' + event.title + '">' + event.title + '</div>');
+        },
+        dateClick: function(info) {
+          alert('Selected date: ' + info.dateStr);
+          addLetterToCalendar(info.date);
+        }
+      });
+      
+    });
+
+    // Function to determine the letter for a given date (same as before)
+    function getLetterForDate(date) {
+      var dayOfMonth = date.date();
+      var letterIndex = (dayOfMonth - 1) % 21;
+
+      if (letterIndex < 7) {
+        return 'D';
+      } else if (letterIndex < 11) {
+        return 'O';
+      } else if (letterIndex < 18) {
+        return 'N';
+      } else {
+        return 'O';
+      }
+    }
+
+    function selectYearAndMonth() {
+    var selectYear = parseInt(document.getElementById('year').value);
+    var selectMonth = parseInt(document.getElementById('month').value);
+
+    // Validate year and month values
+    if (isNaN(selectYear) || isNaN(selectMonth) || selectMonth < 1 || selectMonth > 12) {
+      alert('Invalid year or month.');
+      return;
+    }
+
+    // Create a moment object with the selected year and month (subtract 1 from month for zero-based index)
+    var selectedDate = moment({ year: selectYear, month: selectMonth - 1 });
+
+    // Navigate to the selected date
+    $('#calendar').fullCalendar('gotoDate', selectedDate);
+  }
+
+  // Set default values for the month and year dropdowns to the current month and year
+  $(document).ready(function() {
+    var currentDate = moment(); // Get the current date
+    var currentYear = currentDate.year();
+    var currentMonth = currentDate.month() + 1; // Add 1 to get the month as 1 to 12 range
+
+    // Set default values for the dropdowns
+    document.getElementById('month').value = currentMonth;
+    document.getElementById('year').value = currentYear;
+  });
+
+
+  function getCookieValue(cookieName) {
+    const cookies = document.cookie.split("; ");
+    for (const cookie of cookies) {
+      const [name, value] = cookie.split("=");
+      if (name === cookieName) {
+        return decodeURIComponent(value);
+      }
+    }
+    return null;
+  }
+
+function entitlementCalc(hCount) { 
+  
+  const hEntitlementValue = getCookieValue("hEntitlement");
+  const entitlementsElement = document.querySelector('p[name="hEntitlement"]');
+  const remainingElement = document.querySelector('p[name="hRemaining"]');
+  const hRemaining = hEntitlementValue - hCount;
+
+  if (hEntitlementValue) {
+    entitlementsElement.textContent = `Holiday Entitlement: ${hEntitlementValue}`;
+    remainingElement.textContent = `Holidays Remaining: ${hRemaining}`;
+  } else {
+    entitlementsElement.textContent = "Holiday Entitlement: Not available";
+    remainingElement.textContent = "Holidays Remaining: Not available";
+  }
+
+  if (hRemaining < 0) {
+    remainingElement.style.backgroundColor = "red";
+  } 
+  else if (hRemaining == 0) {
+    remainingElement.style.backgroundColor = "yellow";
+  }
+  else {
+    remainingElement.style.backgroundColor = "#4CAF50";
+  }
+}
+
+
+  // Get the value of the hEntitlement cookie and set the entitlements element
+  const hEntitlementValue = getCookieValue("hEntitlement");
+  const entitlementsElement = document.querySelector('p[name="hEntitlement"]');
+  if (hEntitlementValue) {
+    entitlementsElement.textContent = `Holiday Entitlement: ${hEntitlementValue}`;
+  } else {
+    entitlementsElement.textContent = "Holiday Entitlement: Not available";
+  }
+
+
+
+
+  function addLetterToCalendar() {
+  
+  // Get the selected date range from the input field
+  const dateRangeInput = document.getElementById("dateRangeInput");
+  const selectedDates = dateRangeInput.value;
+
+  // Check if a letter is entered
+  const letter = prompt('Enter a letter for the selected date:');
+  if (letter) {
+    // Format the selected date(s) to "YYYY-MM-DD" format
+    const [startDate, endDate] = selectedDates.split(" to ");
+
+    // Check if endDate exists (date range) or use startDate as endDate (single date)
+    const formattedStartDate = formatDateToYYYYMMDD(startDate);
+    const formattedEndDate = endDate ? formatDateToYYYYMMDD(endDate) : formattedStartDate;
+
+    // Get all the dates in the selected range as an array of "YYYYMMDD" strings
+    const datesArray = getDatesArray(formattedStartDate, formattedEndDate);
+
+    // Get the existing date-letter data from the cookie
+    const datesCookie = getCookieValue("dates") || ""; // If cookie doesn't exist, default to an empty string
+
+    // Create an array to hold the formatted date-letter pairs
+    const dateLetterPairsArray = [];
+
+    // Add the new date-letter pairs for all dates in the selected range
+    for (const date of datesArray) {
+      const dateWithLetter = date + letter;
+      dateLetterPairsArray.push(dateWithLetter);
+    }
+
+    // Split the existing date-letter data into an array
+    const existingDateLetterPairs = datesCookie.split(" ");
+
+    // Remove any existing date that matches any date in the new date-letter pairs
+    for (const dateWithLetter of dateLetterPairsArray) {
+      const date = dateWithLetter.slice(0, 8); // Extract the date part from dateWithLetter (YYYYMMDD format)
+      const index = existingDateLetterPairs.findIndex(existingPair => existingPair.startsWith(date));
+      if (index !== -1) {
+        existingDateLetterPairs.splice(index, 1); // Remove the existing date-letter pair from the array
+      }
+    }
+
+    // Combine the remaining existing date-letter data with the new data and add a space separator
+    const updatedDatesData = existingDateLetterPairs.join(" ") + " " + dateLetterPairsArray.join(" ");
+    // Set the cookie with the updated date-letter data
+    document.cookie = "dates=" + updatedDatesData + "; expires=" + getCookieExpirationDate().toUTCString();
+
+    // Call the AJAX function to save the updated date-letter data on the server
+    ajaxAddDate();
+
+    // Log the updated cookie data to verify if it is being set correctly
+    console.log("Updated Cookie Data: ", document.cookie);
+  }
+}
+
+// Rest of the code remains unchanged.
+
+
+
+
+
+function getDatesArray(startDate, endDate) {
+  const datesArray = [];
+  const currentDate = moment(startDate, "YYYYMMDD");
+  const lastDate = moment(endDate, "YYYYMMDD");
+
+  while (currentDate.isSameOrBefore(lastDate, "day")) {
+    const formattedDate = currentDate.format("YYYYMMDD");
+    datesArray.push(formattedDate);
+    currentDate.add(1, "day");
+  }
+
+  return datesArray;
+}
+
+
+
+function formatDateToYYYYMMDD(dateString) {
+  const parsedDate = moment(dateString, "DD-MM-YYYY"); // Use "DD-MM-YYYY" format for parsing
+  const formattedDate = parsedDate.isValid() ? parsedDate.format("YYYYMMDD") : "";
+  return formattedDate;
+}
+
+// Function to get the value of a cookie by name
+function getCookieValue(name) {
+  const value = "; " + document.cookie;
+  const parts = value.split("; " + name + "=");
+  if (parts.length === 2) return parts.pop().split(";").shift();
+}
+
+// Rest of the helper functions remain unchanged.
+
+
+// Other helper functions remain unchanged.
+
+
+function getCookieValue(name) {
+  const value = "; " + document.cookie;
+  const parts = value.split("; " + name + "=");
+  if (parts.length === 2) return parts.pop().split(";").shift();
+}
+
+function getCookieExpirationDate() {
+  const expirationDate = new Date();
+  expirationDate.setFullYear(expirationDate.getFullYear() + 1);
+  return expirationDate;
+}
+
+
+function ajaxAddDate() {
+  // Get data from cookies
+  const rfName = getCookie('rfName');
+  const rsName = getCookie('rsName');
+  const datesJSON = getCookie('dates');
+
+  // Prepare the data to be sent to the server
+  const data = {
+    rfName: rfName,
+    rsName: rsName,
+    datesJSON: datesJSON
+  };
+
+  // Make the AJAX request
+  $.ajax({
+    type: 'POST',
+    url: 'editDate.php',
+    data: data,
+    dataType: 'json',
+    success: function (response) {
+      // Handle the response from the server if needed
+      console.log(response);
+      location.reload();
+    },
+    error: function (xhr, status, error) {
+      // Handle any error that occurred during the AJAX request
+      console.error(error);
+    }
+  });
+}
+
+// Helper function to get cookie values by name
+function getCookie(name) {
+  const value = "; " + document.cookie;
+  const parts = value.split("; " + name + "=");
+  if (parts.length === 2) return parts.pop().split(";").shift();
+}
+
+var userIDValue = getCookie("userID");
+        if (userIDValue == undefined) {
+          window.location.href = 'Login';
+        }
+
+
+  
+
+
+
+  </script>
+
+
+
+<script>
+  function getRosterData() {
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function () {
+      if (this.readyState == 4 && this.status == 200) {
+        var responseData = JSON.parse(this.responseText);
+
+        // Check if data is not null
+        if (responseData !== null) {
+          // Set cookies with retrieved data
+          document.cookie = "dates=" + responseData.dates;
+          document.cookie = "hEntitlement=" + responseData.hEntitlement;
+          document.cookie = "sEntitlement=" + responseData.sEntitlement;
+          document.cookie = "manager=" + responseData.manager;
+          document.cookie = "rosterS=" + responseData.rosterS;
+        }
+      }
+    };
+    xhttp.open("GET", "getDates.php", true);
+    xhttp.send();
+  }
+
+  // Call the function to get data when the page loads
+  window.addEventListener("load", function () {
+    getRosterData();
+  });
+</script>
+<!--Start of Tawk.to Script-->
+<script type="text/javascript">
+ 
+  </script>
+  <!--End of Tawk.to Script-->
+</body>
+</html>
