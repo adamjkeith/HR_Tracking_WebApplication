@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Holidays</title>
+    <link rel="icon" href="logo.ico" type="image/x-icon">
+    <style>
+        body {
+            background-color: lightgray;
+            font-family: Arial, sans-serif;
+        }
+
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #fff;
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+
+        .coin-pile {
+            position: relative;
+            width: 600px;
+            height: 600px;
+            background-image: url('coin_pile.png');
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            top: 150px;
+        }
+
+        .coin-pile-light {
+            position: absolute;
+            left: 0;
+            width: 100%;
+            height: 0;
+            background-image: url('coin_pile_light.png');
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            animation: reveal 2s linear forwards;
+        }
+
+        .loading-bar {
+            width: 80%;
+            height: 20px;
+            background-color: #f2f2f2;
+            border: 1px solid #ccc;
+            margin-top: 20px;
+            position: relative;
+        }
+
+        .loading-progress {
+            width: 0;
+            height: 100%;
+            background-color: red;
+            text-align: center;
+            color: white;
+            line-height: 20px;
+            position: absolute;
+        }
+
+        @keyframes reveal {
+            0% {
+                height: 0;
+            }
+            100% {
+                height: 100%;
+            }
+        }
+
+        .title-image {
+            position: absolute;
+            top: 60px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 800px;
+            opacity: 0;
+            animation: fade-in 2s forwards;
+            animation-delay: 2s;
+        }
+
+        @keyframes fade-in {
+            0% {
+                opacity: 0;
+            }
+            100% {
+                opacity: 1;
+            }
+        }
+
+        .tracker-content {
+            display: none;
+        }
+
+        .tracker-content.visible {
+            display: block;
+        }
+
+        .tracker-content h1 {
+            color: red;
+            text-align: center;
+        }
+
+        .tracker-content table {
+            margin: 0 auto;
+            border-collapse: collapse;
+        }
+
+        .tracker-content th,
+        .tracker-content td {
+            padding: 10px;
+            text-align: center;
+        }
+
+        .tracker-content th {
+            background-color: red;
+            color: white;
+        }
+
+        .tracker-content td {
+            background-color: white;
+        }
+
+        @keyframes fade-to-light-gray {
+            0% {
+                opacity: 1;
+            }
+            100% {
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading screen -->
+    <div class="loading-screen">
+        <div class="coin-pile">
+            <div class="coin-pile-light"></div>
+        </div>
+        <div class="loading-bar">
+            <div class="loading-progress">0%</div>
+        </div>
+        <!-- Title image -->
+        <img class="title-image" src="Title.png" alt="Title Image">
+    </div>
+
+    <!-- Actual holiday tracker -->
+    <div class="tracker-content">
+        <h1>Holiday Tracker</h1>
+        <table>
+            <tr>
+                <th>Date</th>
+                <th>Holiday</th>
+            </tr>
+            <tr>
+                <td>January 1</td>
+                <td>New Year's Day</td>
+            </tr>
+            <tr>
+                <td>February 14</td>
+                <td>Valentine's Day</td>
+            </tr>
+            <tr>
+                <td>December 25</td>
+                <td>Christmas Day</td>
+            </tr>
+        </table>
+    </div>
+
+    <script>
+        // Wait for the page to fully load
+        window.addEventListener('load', function() {
+            var progressBar = document.querySelector('.loading-progress');
+
+            // Update loading progress every 20 milliseconds
+            var progress = 0;
+            var intervalId = setInterval(function() {
+                progress++;
+                progressBar.style.width = progress + '%';
+                progressBar.textContent = progress + '%';
+
+                if (progress >= 100) {
+                    // Wait for 2 seconds after the bar becomes full
+                    clearInterval(intervalId);
+                    setTimeout(function() {
+                        // Fade to light gray
+                        var loadingScreen = document.querySelector('.loading-screen');
+                        loadingScreen.style.animation = 'fade-to-light-gray 1s forwards';
+
+                        // Redirect to the flight tracker
+                        setTimeout(function() {
+                            window.location.href = '../roster/mindex.html';
+                        }, 1000);
+                    }, 2000);
+                }
+            }, 20);
+        });
+        var userIDValue = getCookie("userID");
+        if (userIDValue == undefined) {
+          window.location.href = 'loginscreen';
+        }
+
+        function getCookie(name) {
+            var value = "; " + document.cookie;
+            var parts = value.split("; " + name + "=");
+            if (parts.length === 2) return parts.pop().split(";").shift();
+        }
+
+    </script>
+</body>
+</html>
