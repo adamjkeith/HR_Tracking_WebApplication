@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en-UK">
+<head>
+  <meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1">
+  <title>Change Password</title>
+  <link rel="icon" href="logo.ico" type="image/x-icon">
+  <style>
+    body {
+      background-color: white;
+      color: black;
+      font-family: Arial, sans-serif;
+      font-size: 18px;
+      display: -ms-flexbox;
+      display: flex;
+      -ms-flex-direction: column;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+      padding: 0;
+    }
+
+    .change-password-container {
+      width: 80%; /* Adjust the width as needed */
+      max-width: 500px;
+      margin: 0 auto;
+      padding: 20px;
+      border: 1px solid lightgray;
+      border-radius: 5px;
+      background-color: white;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+      color: red;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .logo {
+      width: 80%; /* Adjust the width as needed */
+      max-width: 300px;
+      display: block;
+      margin: 0 auto;
+      margin-bottom: 20px;
+    }
+
+    .input-label {
+      display: block;
+      margin-bottom: 10px;
+      font-size: 16px;
+      font-weight: bold;
+    }
+
+    .input-container {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+
+    .input-field {
+      width: 100%;
+      max-width: 400px; /* Adjust the max-width as needed */
+      padding: 10px;
+      font-size: 16px;
+      border: 1px solid lightgray;
+      border-radius: 5px;
+    }
+
+    .button-container {
+      display: flex;
+      justify-content: center;
+      margin-top: 20px;
+    }
+
+    .submit-button,
+    .back-button {
+      background-color: red;
+      color: white;
+      padding: 15px 30px;
+      border: none;
+      border-radius: 5px;
+      text-decoration: none;
+      font-weight: bold;
+      transition: background-color 0.3s ease, cursor 0.3s ease;
+      cursor: pointer;
+      font-size: 18px;
+    }
+
+    .submit-button:hover,
+    .back-button:hover {
+      background-color: darkred;
+    }
+
+    .back-button {
+      position: absolute;
+      top: 4%;
+      left: 5%;
+
+    }
+
+    .error-message {
+      color: red;
+      font-size: 14px;
+      margin-top: 5px;
+      text-align: center;
+    }
+    @keyframes fadeOutAnimation {
+      from {
+        opacity: 1;
+      }
+      to {
+        opacity: 0;
+      }
+    }
+
+    .fade-out {
+      animation: fadeOutAnimation 0.5s ease;
+      animation-fill-mode: forwards; /* Keep the opacity at 0 after the animation ends */
+    }
+
+    @keyframes fadeInAnimation {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+
+    .fade-in {
+      animation: fadeInAnimation 0.5s ease;
+    }
+
+    #overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black overlay */
+      z-index: 9998; /* Set a z-index lower than the logout warning */
+      backdrop-filter: blur(5px); /* Apply the blur effect */
+    }
+
+    /* Styles for the warning screen */
+    #logout-warning {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      padding: 20px;
+      border: 4px solid black;
+      background-color: #f7f7f7;
+      z-index: 9999;
+    }
+
+    /* Customize the appearance of the cancel button */
+    #cancel-button {
+      background-color: #ff0000;
+      color: #fff;
+      border: none;
+      padding: 10px 20px;
+      cursor: pointer;
+    }
+
+    #canel-button:hover {
+      background-color: #cc0000;
+    }
+
+    /* Styles for the countdown timer */ 
+    #countdown {
+      font-size: 24px;
+      font-weight: bold;
+    }
+
+    #logout-warning button:hover {
+      background-color: #cc0000;
+
+    }
+  </style>
+</head>
+<body>
+
+ <!-- Logout Warning Screen -->
+ <div id="logout-warning">
+  <h3>Logout Warning!</h3>
+  <p>You will be logged out in <span id="countdown">60</span> seconds.</p>
+  <button id="cancel-button">Cancel</button>
+</div>
+
+
+  <!-- Blur Overlay -->
+  <div id="overlay"></div>
+
+  <script>
+    // Timer variables
+    let warningTimer;
+    let countdownValue = 60;
+    const countdownElement = document.getElementById('countdown');
+
+    // Show the logout warning after 5 minutes (300,000 ms) of page load
+    setTimeout(showLogoutWarning, 300000);
+
+    // Function to show the logout warning
+    function showLogoutWarning() {
+      document.getElementById('logout-warning').style.display = 'block';
+      document.getElementById('overlay').style.display = 'block'; // Show the blur overlay
+      countdownElement.textContent = countdownValue;
+
+      // Start the countdown
+      warningTimer = setInterval(updateCountdown, 1000);
+    }
+
+    // Function to update the countdown value and redirect if it reaches 0
+    function updateCountdown() {
+      countdownValue--;
+      countdownElement.textContent = countdownValue;
+
+      if (countdownValue <= 0) {
+        clearInterval(warningTimer);
+        window.location.href = 'login screen';
+      }
+    }
+
+    // Function to reset the timer when the cancel button is clicked
+    document.getElementById('cancel-button').addEventListener('click', function () {
+      clearInterval(warningTimer);
+      countdownValue = 60;
+      countdownElement.textContent = countdownValue;
+      document.getElementById('logout-warning').style.display = 'none';
+      document.getElementById('overlay').style.display = 'none'; // Hide the blur overlay
+
+      // Restart the 5-minute timer
+      setTimeout(showLogoutWarning, 300000);
+    });
+  </script>
+
+
+
+
+  
+  <a href="#" class="back-button" onclick="fadeOutScreen('../index.php')">Back</a>
+  <div class="change-password-container">
+    <img src="logo.png" alt="Logo" class="logo">
+    <h1>Change Password</h1>
+    <form id="change-password-form" onsubmit="return validateForm(event)">
+      <div class="input-container">
+        <div>
+          <label class="input-label" for="old-password">Old Password</label>
+          <input type="password" id="old-password" class="input-field" required>
+        </div>
+      </div>
+
+      <div class="input-container">
+        <div>
+          <label class="input-label" for="new-password">New Password</label>
+          <input type="password" id="new-password" class="input-field" required>
+        </div>
+      </div>
+
+      <div class="input-container">
+        <div>
+          <label class="input-label" for="confirm-password">Confirm New Password</label>
+          <input type="password" id="confirm-password" class="input-field" required>
+        </div>
+      </div>
+
+      <div class="error-message" id="error-message"></div>
+
+      <div class="button-container">
+        <button type="submit" class="submit-button">Submit</button>
+      </div>
+    </form>
+  </div>
+
+  
+
+  <script>
+
+function validateForm(event) {
+  var userID = getCookie('userID');
+  function getCookie(name) {
+  const value = "; " + document.cookie;
+  const parts = value.split("; " + name + "=");
+  if (parts.length === 2) return parts.pop().split(";").shift();
+}
+  event.preventDefault();
+
+  const oldPassword2 = document.getElementById('old-password').value;
+
+  const oldPassword = document.getElementById('old-password').value;
+  const newPassword = document.getElementById('new-password').value;
+  const confirmPassword = document.getElementById('confirm-password').value;
+
+  const errorMessage = document.getElementById('error-message');
+
+  if (newPassword !== confirmPassword) {
+    errorMessage.textContent = "New passwords don't match";
+    return false;
+  }
+
+  // Send data to PHP using Ajax
+  const xhr = new XMLHttpRequest();
+  xhr.open('POST', 'change_password.php', true);
+  xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+  xhr.onreadystatechange = function () {
+    if (xhr.readyState === XMLHttpRequest.DONE) {
+      if (xhr.status === 200) {
+        const response = JSON.parse(xhr.responseText);
+        if (response.success) {
+          // Password change successful
+          errorMessage.textContent = "Password changed successfully!";
+        
+        } else {
+          // Error handling
+          errorMessage.textContent = response.message;
+        }
+      } else {
+        errorMessage.textContent = "An error occurred. Please try again later.";
+      }
+    }
+  };
+
+  // Prepare data to send to PHP
+  const data = `userID=${encodeURIComponent(userID)}&oldPassword=${encodeURIComponent(oldPassword)}&newPassword=${encodeURIComponent(newPassword)}`;
+  xhr.send(data);
+
+
+
+
+  // Send data to PHP using Ajax
+  const xhr2 = new XMLHttpRequest();
+  xhr2.open('POST', 'setPC.php', true);
+  xhr2.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+  xhr2.onreadystatechange = function () {
+    if (xhr2.readyState === XMLHttpRequest.DONE) {
+      if (xhr2.status === 200) {
+        const response = JSON.parse(xhr.responseText);
+        if (response.success) {
+          setCookie('PC', '1', 30);
+          fadeOutScreen('../passChange/index.html');
+    
+        } else {
+          // Error handling
+          errorMessage.textContent = response.message;
+        }
+      } else {
+        errorMessage.textContent = "An error occurred. Please try again later.";
+      }
+    }
+  };
+
+  // Prepare data to send to PHP
+  const data2 = `userID=${encodeURIComponent(userID)}`;
+  xhr2.send(data2);
+}
+
+
+
+
+    function fadeOutScreen(url) {
+      // Add the "fade-out" class to the body element to start the fade-out animation
+      document.body.classList.add('fade-out');
+
+      // After the animation ends, redirect to the specified URL
+      setTimeout(function() {
+        window.location.href = url;
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+  // Get the userID cookie
+  var userIDValue = getCookie("userID");
+        if (userIDValue == undefined) {
+          window.location.href = 'http://10.134.33.199:8080/';
+        }
+
+  // Add the userID to the form data object
+
+
+
+  // Apply the fade-in animation
+  document.body.classList.add('fade-in');
+});
+
+function getCookie(name) {
+  const value = "; " + document.cookie;
+  const parts = value.split("; " + name + "=");
+  if (parts.length === 2) return parts.pop().split(";").shift();
+}
+
+
+function setCookie(name, value, days) {
+      var expires = "";
+      if (days) {
+        var date = new Date();
+        date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+        expires = "; expires=" + date.toUTCString();
+      }
+      document.cookie = name + "=" + (value || "") + expires + "; path=/";
+    }
+
+  </script>
+
+
+
+</body>
+
+
+
+</html>
