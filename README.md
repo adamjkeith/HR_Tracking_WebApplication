@@ -12,7 +12,7 @@ This program needs a database set up (look in the code to figure out how to set 
 
 The program will not work without being edited first!
 
-THIS PROGRAM IS NOT INTENDED FOR PEOPLE TO COPY
+THIS PROGRAM IS NOT INTENDED FOR GENERAL USE
 
 
 This program was designed and made by Adam Keith.
