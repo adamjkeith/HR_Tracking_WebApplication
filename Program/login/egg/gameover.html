@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Welcome to Easter Egg Game</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    background-color: #f0f0f0;
+    margin: 0;
+    padding: 50px;
+  }
+  .welcome-text {
+    font-size: 24px;
+    margin-bottom: 20px;
+  }
+  .button {
+    display: inline-block;
+    padding: 10px 20px;
+    margin: 10px;
+    border: none;
+    border-radius: 5px;
+    background-color: #4285f4;
+    color: white;
+    font-size: 18px;
+    cursor: pointer;
+  }
+  .button.exit {
+    background-color: #ea4335;
+  }
+  .game-image {
+    margin-top: 30px;
+  }
+  
+  .block1 {
+    position: relative;
+    top: 0;
+    left: 0;
+    width: 15px;
+    height: 15px;
+  }
+  .block2 {
+    position: realtive;
+    top: 0;
+    left: 0;
+    width: 15px;
+    height: 15px;
+    padding-left: 30px;
+  }
+</style>
+</head>
+<body>
+  <div class="welcome-text">
+    You scored: <span id="score"></span>
+  </div>
+  <div>
+    <a href="index.html" class="button play">Retry</a>
+    <a href="../login.php" class="button exit">Exit</a>
+  </div>
+  <div class="game-image">
+    <img src="player.png" alt="Player Jumping">
+    <img class="block1" src="orange_block.jpg" alt="Orange Block">
+
+    <img class="block2" src="orange_block.jpg" alt="Orange Block">
+  </div>
+</body>
+
+<script>
+  function getCookie(name) {
+    let cookie = {};
+    document.cookie.split(";").forEach(function(el) {
+      let [k,v] = el.split("=");
+      cookie[k.trim()] = v;
+    });
+    return cookie[name];
+  }
+  var score = document.getElementById("score");
+  score.innerHTML = getCookie("score");
+</script>
+</html>

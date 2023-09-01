@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jumping Game</title>
+<style>
+  body {
+    margin: 0;
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-end;
+    height: 100vh;
+    background-color: black;
+  }
+
+  .game-container {
+    position: relative;
+    width: 50px;
+    height: 50px;
+    margin-left: 20px; 
+  }
+  
+  .particle {
+    position: absolute;
+    width: 5px;
+    height: 5px;
+    background-color: white;
+    border-radius: 50%;
+  }
+
+  .orange-rectangle {
+    position: fixed;
+    height: 10px;
+    background-color: orange;
+    bottom: 5px; 
+  }
+
+  #score {
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    color: white;
+    font-size: 20px;
+  }
+</style>
+</head>
+<body>
+<div class="game-container">
+  <img id="player" src="player.png" alt="Player">
+</div>
+<div id="score">Score: 0</div>
+<script>
+  const player = document.getElementById("player");
+  let playerBottom = 0;
+  let isJumping = false;
+  let score = 0;
+
+  document.addEventListener("keydown", (event) => {
+    if (event.code === "Space" && !isJumping) {
+      jump();
+    }
+  });
+
+  function jump() {
+    isJumping = true;
+    const jumpInterval = setInterval(() => {
+      if (playerBottom >= 200) {
+        clearInterval(jumpInterval);
+        fall();
+      } else {
+        playerBottom += 5;
+        player.style.paddingBottom = playerBottom + "px";
+      }
+    }, 10);
+  }
+
+  function fall() {
+    const fallInterval = setInterval(() => {
+      if (playerBottom <= 0) {
+        clearInterval(fallInterval);
+        playerBottom = 0;
+        isJumping = false;
+      } else {
+        playerBottom -= 5;
+        player.style.paddingBottom = playerBottom + "px";
+      }
+    }, 20);
+  }
+
+  function createParticle() {
+    const particle = document.createElement("div");
+    particle.className = "particle";
+    particle.style.left = player.getBoundingClientRect().left + "px";
+    particle.style.bottom = playerBottom + "px";
+    document.body.appendChild(particle);
+
+    const particleDuration = isJumping || playerBottom === 0 ? 100 : 1; 
+
+    setTimeout(() => {
+      particle.style.transform = "translateX(-200%)"; 
+      setTimeout(() => {
+        particle.remove();
+      }, 100); 
+    }, 200);
+  }
+
+
+
+  function checkCollision(rectangle) {
+  const playerRect = player.getBoundingClientRect();
+  const rectangleRect = rectangle.getBoundingClientRect();
+
+  if (
+    playerRect.left < rectangleRect.right &&
+    playerRect.right > rectangleRect.left &&
+    playerRect.bottom > rectangleRect.top &&
+    playerRect.top < rectangleRect.bottom
+  ) {
+    if (!isJumping) {
+      return true;
+    }
+  }
+
+  return false; 
+}
+
+
+
+
+function createOrangeRectangle() {
+  const orangeRectangle = document.createElement("div");
+  orangeRectangle.className = "orange-rectangle";
+  const randomSize = createRandomSize();
+  orangeRectangle.style.width = createRandomSize() + "px";
+  orangeRectangle.style.right = "0"; 
+  document.body.appendChild(orangeRectangle);
+
+  const moveInterval = setInterval(() => {
+    const right = parseInt(orangeRectangle.style.right);
+    if (right <= window.innerWidth) {
+      orangeRectangle.style.right = (right + 2) + "px"; 
+      checkCollision(orangeRectangle); 
+      if (checkCollision(orangeRectangle)) {
+        clearInterval(moveInterval);
+        setCookie("score", score, 1);
+        window.location.href = "gameover.html";
+      }
+    } else {
+      clearInterval(moveInterval);
+      orangeRectangle.remove();
+    }
+  }, 10);
+}
+
+  setInterval(() => {
+    if (!isJumping && playerBottom === 0) {
+      createParticle();
+    }
+  }, 200);
+
+
+
+  function createRandomDelay() {
+  return Math.floor(Math.random() * (6000- 100 + 1)) + 1000;
+}
+
+function createRandomSize() {
+  return Math.floor(Math.random() * (120 - 50));
+}
+  setInterval(() => {
+    createOrangeRectangle();
+  }, createRandomDelay());
+
+
+  setInterval(() => {
+    score += 1;
+    document.getElementById("score").textContent = "Score: " + score;
+  }, 2000);
+
+  function setCookie(cname, cvalue, exdays) {
+  const d = new Date();
+  d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
+  const expires = "expires="+d.toUTCString();
+  document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+}
+</script>
+</body>
+</html>
+
