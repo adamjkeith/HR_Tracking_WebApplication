@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<html>
+<head>
+    <title>Main Menu</title>
+    <link rel="icon" href="logo.ico" type="image/x-icon">
+    <style>
+        body {
+            background-color: lightgray;
+            font-family: Arial, sans-serif;
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            /* Styles for phones and small tablets */
+            .coin-pile {
+                width: 300px;
+                height: 300px;
+            }
+
+            .title-image {
+                width: 300px;
+                top: 40px;
+            }
+        }
+
+        @media (min-width: 769px) and (max-width: 1024px) {
+            /* Styles for medium tablets */
+            .coin-pile {
+                width: 450px;
+                height: 450px;
+            }
+
+            .title-image {
+                width: 450px;
+                top: 60px;
+            }
+        }
+
+        /* Common Styles */
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #fff;
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+
+        .coin-pile {
+            position: relative;
+            width: 600px;
+            height: 600px;
+            background-image: url('coin_pile.png');
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            top: 150px;
+        }
+
+        .coin-pile-light {
+            position: absolute;
+            left: 0;
+            width: 100%;
+            height: 0;
+            background-image: url('coin_pile_light.png');
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            animation: reveal 2s linear forwards;
+        }
+
+        .loading-bar {
+            width: 80%;
+            height: 20px;
+            background-color: #f2f2f2;
+            border: 1px solid #ccc;
+            margin-top: 20px;
+            position: relative;
+        }
+
+        .loading-progress {
+            width: 0;
+            height: 100%;
+            background-color: red;
+            text-align: center;
+            color: white;
+            line-height: 20px;
+            position: absolute;
+        }
+
+        @keyframes reveal {
+            0% {
+                height: 0;
+            }
+            100% {
+                height: 100%;
+            }
+        }
+
+        .tracker-content {
+            display: none;
+        }
+
+        .tracker-content.visible {
+            display: block;
+        }
+
+        .tracker-content h1 {
+            color: red;
+            text-align: center;
+        }
+
+        .tracker-content table {
+            margin: 0 auto;
+            border-collapse: collapse;
+        }
+
+        .tracker-content th,
+        .tracker-content td {
+            padding: 10px;
+            text-align: center;
+        }
+
+        .tracker-content th {
+            background-color: red;
+            color: white;
+        }
+
+        .tracker-content td {
+            background-color: white;
+        }
+
+        @keyframes fade-in {
+            0% {
+                opacity: 0;
+            }
+            100% {
+                opacity: 1;
+            }
+        }
+
+        .title-image {
+            position: absolute;
+            top: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 650px;
+            opacity: 0;
+            animation: fade-in 2s forwards;
+            animation-delay: 2s;
+        }
+    </style>
+</head>
+<body>
+    <div class="loading-screen">
+        <div class="coin-pile">
+            <div class="coin-pile-light"></div>
+        </div>
+        <div class="loading-bar">
+            <div class="loading-progress">0%</div>
+        </div>
+        <img class="title-image" src="Title.png" alt="Title Image">
+    </div>
+
+    <div class="tracker-content">
+        <h1>Holiday Tracker</h1>
+        <table>
+            <tr>
+                <th>Date</th>
+                <th>Holiday</th>
+            </tr>
+            <tr>
+                <td>January 1</td>
+                <td>New Year's Day</td>
+            </tr>
+            <tr>
+                <td>February 14</td>
+                <td>Valentine's Day</td>
+            </tr>
+            <tr>
+                <td>December 25</td>
+                <td>Christmas Day</td>
+            </tr>
+        </table>
+    </div>
+
+    
+    <script>
+        var userIDValue = getCookie("userID");
+        var ajaxCompleted = false; // Flag to check if the AJAX request has completed
+        var lang; // Variable to store the language preference
+
+        function getCookie(name) {
+            var value = "; " + document.cookie;
+            var parts = value.split("; " + name + "=");
+            if (parts.length === 2) return parts.pop().split(";").shift();
+        }
+
+        function makeAjaxRequestL() {
+            var userID 
+            // AJAX request to send userIDValue to the PHP script in a different file
+            var xhr = new XMLHttpRequest();
+            var url = 'getLang.php';
+            var data = 'userIDValue=' + userIDValue;
+
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    // Handle the response from the PHP script
+                    lang = xhr.responseText;
+                    ajaxCompleted = true; // Set the flag to true when the request is completed
+                }
+            };
+
+            xhr.open('POST', url, true);
+            xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+            xhr.send(data);
+        }
+
+        function makeAjaxRequestTC() {
+    var xhr = new XMLHttpRequest();
+    var url = 'getTC.php';
+    var data = 'userIDValue=' + userIDValue; // Send the userIDValue in the POST data
+
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+            // Handle the response from the PHP script
+            var TC = xhr.responseText;
+        }
+    };
+
+    xhr.open('POST', url, true);
+    xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+    xhr.send(data);
+}
+
+       
+        window.addEventListener('load', function () {
+            makeAjaxRequestL(); // Call the AJAX function when the page is loaded
+            makeAjaxRequestTC();
+            var progressBar = document.querySelector('.loading-progress');
+            var progress = 0;
+            var intervalId = setInterval(function () {
+                progress++;
+                progressBar.style.width = progress + '%';
+                progressBar.textContent = progress + '%';
+
+                if (progress >= 100) {
+                    clearInterval(intervalId);
+                    setTimeout(function () {
+                        if (ajaxCompleted) {
+                            // Redirect based on the retrieved language
+                            if (lang === "GB") {
+                                window.location.href = '../../en/menu/index.php';
+                            } else if (lang === "BR") {
+                                window.location.href = '../../br/menu/index.php';
+                            } else if (lang === "RU") {
+                                window.location.href = '../../ru/menu/index.php';
+                            } else {
+                                // Handle the case when language is not recognized or returned
+                        
+                                // Redirect to a default location when the language is not recognized
+                                window.location.href = '../menu/index.php';
+                            }
+                        } else {
+                            // AJAX request is not completed; handle the timeout scenario
+                   
+                            // Redirect to a default location or show an error message
+                            window.location.href = '../menu/index.php';
+                        }
+                    }, 2000);
+                }
+            }, 20);
+        });
+
+        function setCookie(name, value, days) {
+    var expires = "";
+    if (days) {
+      var date = new Date();
+      date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+      expires = "; expires=" + date.toUTCString();
+    }
+    document.cookie = name + "=" + (value || "") + expires + "; path=/";
+  }
+    </script>
+
+
+    
+</body>
+</html>
