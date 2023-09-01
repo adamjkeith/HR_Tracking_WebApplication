@@ -1,0 +1,1266 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>HR Dashboard</title>
+  <link rel="icon" href="logo.ico" type="image/x-icon">
+  <style>
+    body {
+      background-color: lightgray;
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      opacity: 0;
+      transition: opacity 1s ease;
+      overflow-x: hidden;
+    }
+
+    .fade-in {
+      opacity: 1;
+    }
+
+    h1 {
+      color: red;
+      z-index: 9999;
+      margin: 5% 15% 16% 16%;
+      font-style: bold;
+    }
+
+    .logo {
+      max-width: 300px;
+      left: 12%;
+      top: 20%;
+      position: relative;
+    }
+
+    .form-container {
+      max-width: 400px;
+      margin: 0 auto;
+      text-align: center;
+      margin-top: 50px;
+      opacity: 1;
+      transition: opacity 1s ease;
+    }
+
+    .fade-out {
+      opacity: 0;
+    }
+
+    .form-container label {
+      display: block;
+      margin-bottom: 10px;
+    }
+
+    .form-container input[type="text"] {
+      width: 100%;
+      padding: 12px;
+      font-size: 18px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      margin-bottom: 15px;
+    }
+
+    .form-container button[type="submit"] {
+      background-color: red;
+      color: white;
+      border: none;
+      cursor: pointer;
+      padding: 10px 20px;
+      font-size: 18px;
+      border-radius: 20px;
+      transition: background-color 0.3s ease;
+      box-shadow: 0 3px 0 rgba(0, 0, 0, 0.2);
+    }
+
+    .form-container button[type="submit"]:hover {
+      background-color: #ff4444;
+    }
+
+    .back-button {
+      position: fixed;
+      top: 4%;
+      right: 10%;
+      z-index: 21;
+    }
+
+    .back-button button {
+      background-color: white;
+      color: black;
+      border: none;
+      cursor: pointer;
+      padding: 8px 16px;
+      font-size: 18px;
+      border-radius: 10px;
+      transition: background-color 0.3s ease;
+      box-shadow: 0 3px 0 rgba(0, 0, 0, 0.2);
+
+    }
+
+    .back-button button:hover {
+      background-color: #e0e0e0;
+    }
+
+
+    #overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black overlay */
+      z-index: 9998; /* Set a z-index lower than the logout warning */
+      backdrop-filter: blur(5px); /* Apply the blur effect */
+    }
+
+    /* Styles for the warning screen */
+    #logout-warning {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      padding: 20px;
+      border: 4px solid black;
+      background-color: #f7f7f7;
+      z-index: 9999;
+    }
+
+    /* Customize the appearance of the cancel button */
+    #cancel-button {
+      background-color: #ff0000;
+      color: #fff;
+      border: none;
+      padding: 10px 20px;
+      cursor: pointer;
+    }
+
+    #canel-button:hover {
+      background-color: #cc0000;
+    }
+
+    /* Styles for the countdown timer */ 
+    #countdown {
+      font-size: 24px;
+      font-weight: bold;
+    }
+
+    #logout-warning button:hover {
+      background-color: #cc0000;
+
+    }
+
+    .headerBackground {
+      background-color: #aaaaaa;
+      height: 100px;
+      width: 60%;
+      position: fixed;
+      top: 0;
+      right: 0;
+      margin: 0;
+      z-index: 20;
+    }
+
+    .logoBackground {
+      background-color: #eeeeee;
+      height: 100px;
+      width: 40%;
+      position: fixed;
+      top: 0;
+      left: 0;
+      margin: 0;
+      z-index: 20;
+    }
+
+    .buttons-background {
+      background-color: #eeeeee;
+      height: 50px;
+      width: 110%;
+      top: 80px;
+      outline: black solid 1px;
+      position: fixed;
+      left: -5%;
+      place-items: center;
+      display: grid;
+      margin-bottom: 50px;
+      margin-top: 20px;
+      z-index: 20;
+    }
+    
+    .buttons-background button {
+      background-color: red;
+      border: none;
+      cursor: pointer;
+      padding: 8px 16px;
+      font-size: 18px;
+      border-radius: 10px;
+      transition: background-color 0.3s ease;
+      box-shadow: 0 3px 0 rgba(0, 0, 0, 0.2);
+      color: white;
+      margin: 0 100px;
+    }
+
+    .buttons-background button:hover {
+      background-color: #ff4444;
+      zoom: 1.1;
+    }
+
+    .buttons-background button.active {
+      background-color: #aa4444;
+      zoom: 1.1;
+      text-decoration: underline;
+      cursor: not-allowed;
+
+    }
+
+    .logo:hover {
+      cursor: not-allowed;
+    }
+
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    window.addEventListener("load", function() {
+      var body = document.querySelector("body");
+      body.classList.add("fade-in");
+    });
+  </script>
+</head>
+<body>
+
+
+
+  <!-- Logout Warning Screen -->
+ <div id="logout-warning">
+  <h3>Logout Warning!</h3>
+  <p>You will be logged out in <span id="countdown">60</span> seconds.</p>
+  <button id="cancel-button">Cancel</button>
+</div>
+
+  <!-- Logout Warning Screen -->
+  <div id="logout-warning">
+    <h3>Logout Warning!</h3>
+    <p>You will be logged out in <span id="countdown">60</span> seconds.</p>
+    <button id="cancel-button">Cancel</button>
+  </div>
+
+  <!-- Blur Overlay -->
+  <div id="overlay"></div>
+
+  <script>
+    // Timer variables
+    let warningTimer;
+    let countdownValue = 60;
+    const countdownElement = document.getElementById('countdown');
+
+    // Show the logout warning after 5 minutes (300,000 ms) of page load
+    setTimeout(showLogoutWarning, 300000);
+
+    // Function to show the logout warning
+    function showLogoutWarning() {
+      document.getElementById('logout-warning').style.display = 'block';
+      document.getElementById('overlay').style.display = 'block'; // Show the blur overlay
+      countdownElement.textContent = countdownValue;
+
+      // Start the countdown
+      warningTimer = setInterval(updateCountdown, 1000);
+    }
+
+    // Function to update the countdown value and redirect if it reaches 0
+    function updateCountdown() {
+      countdownValue--;
+      countdownElement.textContent = countdownValue;
+
+      if (countdownValue <= 0) {
+        clearInterval(warningTimer);
+        window.location.href = 'login page';
+      }
+    }
+
+    // Function to reset the timer when the cancel button is clicked
+    document.getElementById('cancel-button').addEventListener('click', function () {
+      clearInterval(warningTimer);
+      countdownValue = 60;
+      countdownElement.textContent = countdownValue;
+      document.getElementById('logout-warning').style.display = 'none';
+      document.getElementById('overlay').style.display = 'none'; // Hide the blur overlay
+
+      // Restart the 5-minute timer
+      setTimeout(showLogoutWarning, 300000);
+    });
+  </script>
+
+
+
+  <div class="back-button">
+    <button onclick="navigateToLoadingScreen()">Back to trackers menu</button>
+  </div> 
+  <div class="logoBackground">
+  <img class="logo" src="logo.png" alt="Logo">
+  </div>
+  <div class ="headerBackground">
+  <h1>HR DASHBOARD</h1>
+  </div>
+  <div class="buttons-background">
+    <div class="buttons">
+    <button class="active">Dashboard</button>
+    <button onclick="navigateToEmployees()">Employees</button>
+    <button onclick="navigateToRecruit()">Recruitment</button>
+    </div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <div class="selection container">
+  <h2>Select Year:</h2>
+  <select id="yearDropdown" onchange="refreshPage()">
+    <option value="">Select Year</option>
+    <option value="2023">2023</option>
+    <option value="2024">2024</option>
+    <option value="2025">2025</option>
+  </select>
+
+
+  <h2>Select Month:</h2>
+  <select id="monthDropdown" onchange="refreshPage()">
+    <option value="">Select Month</option>
+    <option value="Jan">Jan</option>
+    <option value="Feb">Feb</option>
+    <option value="Mar">Mar</option>
+    <option value="Apr">Apr</option>
+    <option value="May">May</option>
+    <option value="Jun">Jun</option>
+    <option value="Jul">Jul</option>
+    <option value="Aug">Aug</option>
+    <option value="Sep">Sep</option>
+    <option value="Oct">Oct</option>
+    <option value="Nov">Nov</option>
+    <option value="Dec">Dec</option>
+  </select>
+  </div>
+
+  <style>
+
+    .container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 0 auto;
+      width: 600px;
+      height: 100px;
+      background-color: white;
+      border-radius: 20px;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+    }
+
+    h2 {
+      font-size: 16px;
+      margin: 0 10px;
+    }
+
+    select {
+      font-size: 16px;
+      padding: 5px 10px;
+      border: 1px solid #aaa;
+      border-radius: 5px;
+      background-color: #fff;
+      box-shadow: inset 0 1px 3px #ddd;
+    }
+
+    select:focus {
+      outline: none;
+      border-color: #aaa;
+    }
+
+    select option {
+      font-size: 16px;
+    }
+
+    select option[value=""] {
+      color: #999;
+    }
+
+    select option[value=""]:hover {
+      background-color: #eee;
+    }
+
+    select option:not([value=""]):hover {
+      background-color: #ddd;
+    }
+
+    select option[selected] {
+      background-color: #888;
+      color: #fff;
+    }
+
+    select option[selected]:hover {
+      background-color: #666;
+    }
+
+    select option[disabled] {
+      color: #999;
+    }
+
+    select option[disabled]:hover {
+      background-color: transparent;
+    }
+
+    select option[hidden] {
+      display: none;
+    }
+  </style>
+
+  <script>
+    function setCookie(name, value, days) {
+  var expires = "";
+  if (days) {
+    var date = new Date();
+    date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+    expires = "; expires=" + date.toUTCString();
+  }
+  document.cookie = name + "=" + value + expires + "; path=/";
+}
+
+
+function refreshPage() {
+  var yearDropdown = document.getElementById("yearDropdown");
+  var selectedYear = yearDropdown.value;
+
+  var monthDropdown = document.getElementById("monthDropdown");
+  var selectedMonth = monthDropdown.value;
+
+  if (selectedYear !== "") {
+    localStorage.setItem("selectedYear", selectedYear);
+    setCookie("selectedYear", selectedYear, 30);
+    location.reload();
+  }
+
+  if (selectedMonth !== "") {
+    localStorage.setItem("selectedMonth", selectedMonth);
+    setCookie("selectedMonth", selectedMonth, 30);
+    location.reload();
+  }
+}
+
+window.onload = function() {
+  var storedYear = localStorage.getItem("selectedYear");
+  if (storedYear) {
+    var yearDropdown = document.getElementById("yearDropdown");
+    yearDropdown.value = storedYear;
+  }
+
+  var storedMonth = localStorage.getItem("selectedMonth");
+  if (storedMonth) {
+    var monthDropdown = document.getElementById("monthDropdown");
+    monthDropdown.value = storedMonth;
+  }
+};
+  </script>
+  
+
+
+  <br>
+  <br>
+
+  <!-- Headcount Start -->
+
+  <!-- Headcount Chart -->
+  <div class="backgroundchart">
+    <br>
+    <br>
+  <div class="chart-container">
+    <label class="headlabel">HEADCOUNT</label>
+    <br>
+    <canvas id="headcountChart" width="600" height="600"></canvas>
+  </div>
+  </div>
+</div>
+
+<!-- Styles for Headcount -->
+<style>
+  .backgroundchart{
+    background-color: white;
+  border-radius: 20px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+  width: 600px;
+  height: 400px;
+  margin: 0 auto;
+  }
+  .chart-container {
+  position: relative;
+  width: 300px; 
+  height: 300px; 
+  margin: 0 auto;
+}
+.chart-label {
+  position: absolute;
+  top: 60%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-weight: bold;
+  font-size: 25px;
+  text-align: center;
+  color: Black;
+}
+.headlabel {
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-weight: bold;
+  font-size: 16px;
+  text-align: center;
+  color: Black;
+}
+  .chart-legend {
+    list-style: none;
+    display: flex;
+    justify-content: center;
+    margin: 0;
+    padding: 0;
+  }
+
+  .chart-legend-item {
+    display: flex;
+    align-items: center;
+    margin: 0 10px;
+  }
+
+  .chart-legend-icon {
+    width: 20px;
+    height: 20px;
+    margin-right: 5px;
+  }
+
+  .chart-legend-label {
+    font-size: 14px;
+  }
+</style>
+
+<!-- Script for HeadCount -->
+<script>
+
+function getCookie(name) {
+            var value = "; " + document.cookie;
+            var parts = value.split("; " + name + "=");
+            if (parts.length === 2) return parts.pop().split(";").shift();
+        }
+  selectedYear = getCookie("selectedYear");
+  if (selectedYear == null) {
+    selectedYear = "2023";
+  }
+  selectedMonth = getCookie("selectedMonth");
+  if (selectedMonth == null) {
+    selectedMonth = "Jan";
+  }
+
+  selectedYear = selectedYear.slice(2);
+  
+  // Data variables
+  var maleColumn = "male" + selectedMonth + selectedYear;
+  var femaleColumn = "female" + selectedMonth + selectedYear;
+  var maleCount = 0;
+  var femaleCount = 0;
+            var mxhr = new XMLHttpRequest();
+            mxhr.open("POST", "getMale.php", true);
+            mxhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+            mxhr.onreadystatechange = function() {
+                if (mxhr.readyState === XMLHttpRequest.DONE) {
+                    if (mxhr.status === 200) {
+                        var maleData = mxhr.responseText;
+                        var maleCount = parseInt(maleData);
+                        var maleColumn = "male" + selectedYear;
+                        var fxhr = new XMLHttpRequest();
+                        fxhr.open("POST", "getFemale.php", true);
+                        fxhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+                        fxhr.onreadystatechange = function() {
+                            if (fxhr.readyState === XMLHttpRequest.DONE) {
+                                if (fxhr.status === 200) {
+                                    var femaleData = fxhr.responseText;
+                                    var femaleCount = parseInt(femaleData);
+                                    // Chart data and options
+                                    var data = {
+                                    labels: ["Male", "Female"],
+                                    datasets: [
+                                      {
+                                        data: [maleCount, femaleCount],
+                                        backgroundColor: ["blue", "pink"],
+                                        hoverBackgroundColor: ["rgba(0, 0, 255, 0.8)", "rgba(255, 192, 203, 0.8)"],
+                                        borderColor: "transparent",
+                                      },
+                                    ],
+                                  };
+                                  var options = {
+                                    title: {
+                                      display: true,
+                                      text: "Headcount",
+                                      position: "top",
+                                      fontSize: 18,
+                                      fontColor: "black",
+                                    },
+                                    legend: {
+                                      display: true,
+                                      position: "bottom",
+                                      labels: {
+                                        fontColor: "black",
+                                      },
+                                    },
+                                    cutoutPercentage: 60,
+                                  plugins: {
+                                      datalabels: {
+                                        color: "gray",
+                                        font: {
+                                          weight: "bold",
+                                        },
+                                        formatter: function (value, context) {
+                                          return value;
+                                        },
+                                        display: "auto",
+                                      },
+                                    },
+                                  };
+                                    var ctx = document.getElementById("headcountChart").getContext("2d");
+                                    var myChart = new Chart(ctx, {
+                                      type: "doughnut",
+                                      data: data,
+                                      options: options,
+                                    });
+                                  var labelCanvas = document.createElement("canvas");
+                                  labelCanvas.id = "labelCanvas";
+                                  document.body.appendChild(labelCanvas);
+                                  var labelCtx = labelCanvas.getContext("2d");
+                                  var chartTotal = maleCount+femaleCount;
+                                  document.getElementById("headcountChart").insertAdjacentHTML(
+                                    "afterend",
+                                    '<div class="chart-label" id="labelTotal">' + chartTotal + '</div>'
+                                  );
+                                } else {
+                                    console.error("Request failed with status:", fxhr.status);
+                                }
+                            }
+                        };
+                        fxhr.send("column=" + femaleColumn);
+                    } else {
+                        console.error("Request failed with status:", mxhr.status);
+                    }
+                }
+            };
+            mxhr.send("column=" + maleColumn);
+</script>
+
+<!-- HeadCount End -->
+
+  
+<!-- Departments Start -->
+
+<div class="depBack">
+  <br>
+  <br>
+    <div class="departments-chart-container">
+      <label class="departments-label">DEPARTMENTS</label>
+      <br>
+      <canvas id="departmentsChart" width="300" height="300"></canvas>
+    </div>
+  </div>
+</div>
+
+<!-- Styles for departments -->
+<style>
+    .depBack{
+      position: absolute;
+    background-color: white;
+  border-radius: 20px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+  width: 600px;
+  height: 400px;
+  margin: 0 auto;
+  top: 40%;
+  left: 1%;
+  }
+  .departments-chart-container {
+  width: 300px;
+  height: 300px; 
+  margin: 0 auto;
+}
+.departments-label {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-weight: bold;
+  font-size: 16px;
+  text-align: center;
+  color: black;
+}
+</style>
+
+<!-- Script for Departments -->
+<script>
+function getCookie(name) {
+            var value = "; " + document.cookie;
+            var parts = value.split("; " + name + "=");
+            if (parts.length === 2) return parts.pop().split(";").shift();
+        }
+  selectedYear = getCookie("selectedYear");
+  if (selectedYear == null) {
+    selectedYear = "2023";
+  }
+  selectedMonth = getCookie("selectedMonth");
+  if (selectedMonth == null) {
+    selectedMonth = "Jan";
+  }
+  selectedYear = selectedYear.slice(2);
+  var depColumn = "department"+ selectedMonth + selectedYear;
+var dxhr = new XMLHttpRequest();
+dxhr.open("POST", "getDep.php", true);
+dxhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+dxhr.onreadystatechange = function() {
+    if (dxhr.readyState === XMLHttpRequest.DONE) {
+        if (dxhr.status === 200) {
+            var depData = dxhr.responseText;
+            var dataString = "data: ["+depData+"]";
+            var dataArray = dataString.match(/\[(.*?)\]/)[1].split(',').map(Number);
+            // Data variables for departments
+            var departmentsData = {
+                labels: ["Service Shaft", "Production Shaft", "M&E", "HR"],
+                datasets: [
+                  {
+                    data: dataArray,
+                    backgroundColor: ["blue", "green", "orange", "purple"],
+                    hoverBackgroundColor: ["rgba(0, 0, 255, 0.8)", "rgba(0, 128, 0, 0.8)", "rgba(255, 165, 0, 0.8)", "rgba(128, 0, 128, 0.8)"],
+                    borderColor: "transparent",
+                  },
+                ],
+              };
+            // Chart options for departments
+            var departmentsOptions = {
+              title: {
+                display: true,
+                text: "Departments",
+                position: "top",
+                fontSize: 18,
+                fontColor: "black",
+              },
+              legend: {
+                display: true,
+                position: "bottom",
+                labels: {
+                  fontColor: "black",
+                },
+              },
+            };
+            // Create the departments chart as a pie chart
+            var departmentsCtx = document.getElementById("departmentsChart").getContext("2d");
+            var departmentsChart = new Chart(departmentsCtx, {
+              type: "pie",
+              data: departmentsData,
+              options: departmentsOptions,
+            });
+        } else {
+            console.error("Request failed with status:", dxhr.status);
+        }
+    }
+};
+dxhr.send("column=" + depColumn);
+</script>
+
+<!-- Departments END -->
+
+<div class="SickWelfareBack">
+  <br>
+  <br>
+    <div class="sick-chart-container">
+      <label class="sickWelfare-label">SICKNESS & WELFARE</label>
+      <br>
+      <br>
+      <canvas id="sicknessWelfareChart" width="900" height="400"></canvas>
+    </div>
+  </div>
+</div>
+
+<style>
+  .SickWelfareBack{
+    position: absolute;
+    background-color: white;
+  border-radius: 20px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+  width: 900px;
+  height: 400px;
+  margin: 0 auto;
+  top: 90%;
+  left: 1%;
+  }
+
+  .sickWelfare-label {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-weight: bold;
+  font-size: 16px;
+  text-align: center;
+  color: black;
+}
+
+.sick-chart-container {
+  position: relative;
+  width: 600px; /* Adjust to match the chart's width */
+  height: 300px; /* Adjust to match the chart's height */
+  margin: 0 auto;
+}
+
+/* Style the chart legend */
+.sick-chart-legend {
+  list-style: none;
+  display: flex;
+  justify-content: center;
+  margin: 0;
+  padding: 0;
+}
+
+.sick-chart-legend-item {
+  display: flex;
+  align-items: center;
+  margin: 0 10px;
+}
+
+.sick-chart-legend-icon {
+  width: 20px;
+  height: 20px;
+  margin-right: 5px;
+}
+
+.sick-chart-legend-label {
+  font-size: 14px;
+}
+
+</style>
+
+<script>
+  var months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+  var welfareCallsData = [4, 2, 3, 6, 2, 4, 11, 5, 6, 4, 4, 10];
+  var serviceShaftData = [6, 2, 4, 7, 1, 3, 12, 8, 2, 5, 3, 11];
+  var productionShaftData = [2, 1, 2, 5, 4, 6, 10, 2, 7, 3, 5, 9];
+  var chartData = {
+      labels: months,
+      datasets: [
+        {
+          type: "line", // Line graph dataset
+          label: "Welfare Calls",
+          borderColor: "black",
+          fill: false,
+          data: welfareCallsData,
+        },
+        {
+          type: "bar", // Bar graph dataset
+          label: "Service Shaft",
+          backgroundColor: "#7777FF",
+          data: serviceShaftData,
+        },
+        {
+          type: "bar", // Bar graph dataset
+          label: "Production Shaft",
+          backgroundColor: "orange",
+          data: productionShaftData,
+        },
+      ],
+    };
+    var chartOptions = {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        x: {
+          stacked: true,
+        },
+        y: {
+          stacked: true,
+          beginAtZero: true,
+        },
+      },
+    };
+    var chartCtx = document.getElementById("sicknessWelfareChart").getContext("2d");
+    var sicknessWelfareChart = new Chart(chartCtx, {
+      type: "bar",
+      data: chartData,
+      options: chartOptions,
+    });
+</script>
+
+
+
+
+<div class="growthBack">
+  <br>
+  <br>
+    <div class="growth-chart-container">
+      <label class="growth-label">GROWTH</label>
+      <br>
+      <p class="percentCurrent" id="percentCurrent">23.6%</p>
+      <p class="difference">+7.4%</p>
+      <p class="gvs">vs. Last Month </p>
+    </div>
+  </div>
+</div>
+
+<style>
+  .percentCurrent{
+    position: absolute;
+    top: 15%;
+    left: 35%;
+    font-weight: bold;
+    font-size: 70px;
+    text-align: center;
+    color: black;
+  }
+  .difference{
+    position: absolute;
+    top: 45%;
+    left: 43%;
+    font-weight: bold;
+    font-size: 30px;
+    text-align: center;
+    color: darkgreen;
+  }
+  .gvs{
+    position: absolute;
+    top: 58%;
+    left: 42%;
+    font-weight: bold;
+    font-size: 15px;
+    text-align: center;
+    color: black;
+  }
+
+
+    .growthBack{
+      position: absolute;
+    background-color: white;
+  border-radius: 20px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+  width: 600px;
+  height: 400px;
+  margin: 0 auto;
+  top: 40%;
+  right: 1%;
+
+  }
+  .growth-chart-container {
+
+  width: 300px; /* Adjust to match the chart's width */
+  height: 300px; /* Adjust to match the chart's height */
+  margin: 0 auto;
+
+}
+
+/* Styles for the chart label */
+.growth-label {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-weight: bold;
+  font-size: 16px;
+  text-align: center;
+  color: black;
+}
+</style>
+
+
+<div class="hvBack">
+  <br>
+  <br>
+    <div class="hv-chart-container">
+      <label class="hv-label">HIRED VS. LEFT</label>
+      <br>
+      <br>  
+      <canvas id="hiredLeftChart" width="900" height="400"></canvas>
+    </div>
+  </div>
+</div>
+
+<style>
+  .hvBack{
+    position: absolute;
+    background-color: white;
+  border-radius: 20px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+  width: 900px;
+  height: 400px;
+  margin: 0 auto;
+  top: 90%;
+  right: 1%;
+
+  }
+  .hv-chart-container {
+
+  width: 600px; /* Adjust to match the chart's width */
+  height: 300px; /* Adjust to match the chart's height */
+  margin: 0 auto;
+
+}
+
+/* Styles for the chart label */
+.hv-label {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-weight: bold;
+  font-size: 16px;
+  text-align: center;
+  color: black;
+}
+
+
+</style>
+
+<script>
+  var months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+  var hiredData = [4, 2, 1, 0, 3, 11, 8, 5, 6, 4, 8, 7];
+  var leftData = [1, 3, 0, 1, 2, 3, 2, 1, 2, 1, 0, 10];
+
+  var netChangeData = hiredData.map((hired, index) => hired - leftData[index]);
+
+  var chartData = {
+    labels: months,
+    datasets: [
+      {
+        type: "line",
+        label: "Net Change",
+        borderColor: "blue",
+        fill: false,
+        data: netChangeData,
+      },
+      {
+        type: "bar",
+        label: "Hired",
+        backgroundColor: "#44bb44",
+        data: hiredData,
+      },
+      {
+        type: "bar",
+        label: "Left",
+        backgroundColor: "red",
+        data: leftData.map(value => -value), // Invert values for red bars (left employees)
+      },
+    ],
+  };
+
+  var chartOptions = {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        x: {
+          stacked: true,
+        },
+        y: {
+          stacked: true,
+          beginAtZero: true,
+        },
+      },
+      plugins: {
+        annotation: {
+          annotations: [{
+            type: 'line',
+            mode: 'horizontal',
+            scaleID: 'y',
+            value: 0,
+            borderColor: 'black',
+            borderWidth: 2,
+          }]
+        }
+      }
+    };
+
+
+  var chartCtx = document.getElementById("hiredLeftChart").getContext("2d");
+  var hiredLeftChart = new Chart(chartCtx, {
+    type: "bar",
+    data: chartData,
+    options: chartOptions,
+  });
+</script>
+
+
+
+
+
+  <!--Start of Tawk.to Script-->
+  <script type="text/javascript">
+    
+    </script>
+  <!--End of Tawk.to Script-->
+</body>
+
+</html>
+
+
+<!-- Your existing HTML code here -->
+
+<script>
+  function setCookies() {
+    // Get the values from the input fields
+    var firstName = document.getElementById("firstname").value;
+    var surname = document.getElementById("surname").value;
+
+    // Set the cookies with expiration date in 30 days
+    document.cookie = "rfName=" + firstName + "; expires=" + getCookieExpirationDate(30);
+    document.cookie = "rsName=" + surname + "; expires=" + getCookieExpirationDate(30);
+
+    // Redirect to the searching.html page
+    searchForm();
+  }
+
+  // Function to calculate the expiration date for the cookie
+  function getCookieExpirationDate(days) {
+    var date = new Date();
+    date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+    return date.toUTCString();
+  }
+
+
+        function getCookie(name) {
+            var value = "; " + document.cookie;
+            var parts = value.split("; " + name + "=");
+            if (parts.length === 2) return parts.pop().split(";").shift();
+        }
+
+</script>
+<script>
+  function navigateToLoadingScreen() {
+    var body = document.querySelector("body");
+    var elements = document.querySelectorAll("body *");
+
+    for (var i = 0; i < elements.length; i++) {
+      elements[i].style.transition = "opacity 1s ease";
+      elements[i].style.opacity = 0;
+    }
+
+    body.style.transition = "background-color 1s ease";
+    body.style.backgroundColor = "white";
+
+    setTimeout(function() {
+      window.location.href = "/en/loadingTrackers/loading_screen.html";
+    }, 1000);
+  }
+
+  function searchForm() {
+    var formContainer = document.querySelector(".form-container");
+    formContainer.classList.add("fade-out");
+    setTimeout(function() {
+      window.location.href = "searching.html";
+    }, 1000);
+  }
+
+  window.addEventListener("load", function() {
+    var body = document.querySelector("body");
+    body.style.transition = "background-color 1s ease";
+  });
+
+
+
+  function navigateToEmployees() {
+    var body = document.querySelector("body");
+    var elements = document.querySelectorAll("body *");
+
+    for (var i = 0; i < elements.length; i++) {
+      elements[i].style.transition = "opacity 1s ease";
+      elements[i].style.opacity = 0;
+    }
+
+    body.style.transition = "background-color 1s ease";
+    body.style.backgroundColor = "lightgray";
+
+    setTimeout(function() {
+      window.location.href = "/en/hr/employees.html";
+    }, 1000);
+  }
+
+  function navigateToRecruit() {
+    var body = document.querySelector("body");
+    var elements = document.querySelectorAll("body *");
+
+    for (var i = 0; i < elements.length; i++) {
+      elements[i].style.transition = "opacity 1s ease";
+      elements[i].style.opacity = 0;
+    }
+
+    body.style.transition = "background-color 1s ease";
+    body.style.backgroundColor = "lightgray";
+
+    setTimeout(function() {
+      window.location.href = "/en/hr/recruitment.html";
+    }, 1000);
+  }
+
+  function navigateToSettings() {
+    var body = document.querySelector("body");
+    var elements = document.querySelectorAll("body *");
+
+    for (var i = 0; i < elements.length; i++) {
+      elements[i].style.transition = "opacity 1s ease";
+      elements[i].style.opacity = 0;
+    }
+
+    body.style.transition = "background-color 1s ease";
+    body.style.backgroundColor = "lightgray";
+
+    setTimeout(function() {
+      window.location.href = "/en/hr/settings.html";
+    }, 1000);
+  }
+
+  var userIDValue = getCookie("userID");
+        if (userIDValue == undefined) {
+          window.location.href = 'login page';
+        }
+
+        function getCookie(name) {
+            var value = "; " + document.cookie;
+            var parts = value.split("; " + name + "=");
+            if (parts.length === 2) return parts.pop().split(";").shift();
+        }
+
+
+
+
+
+
+var selectedYear = "23"; 
+// Get the current date
+const serverUrl = 'getServerDate.php';
+
+fetch(serverUrl)
+  .then(response => response.json())
+  .then(data => {
+    const serverDate = data.serverDate;
+
+    // Assuming the serverDate is in the format "yyyy-mm-dd"
+    const [year, month, day] = serverDate.split('-');
+
+    // Format the date as dd/mm/yy
+    const formattedDate = `${day}/${month}/${year.slice(-2)}`;
+  })
+  .catch(error => {
+    console.error('Error fetching server date:', error);
+  });
+
+
+
+
+  const serverUrlFlag = 'getFlag.php'; 
+
+// Make an AJAX request to fetch the flag value
+const xhr = new XMLHttpRequest();
+xhr.onreadystatechange = function() {
+    if (xhr.readyState === 4 && xhr.status === 200) {
+        const response = JSON.parse(xhr.responseText);
+        const cflag = response.flag;
+    }
+};
+xhr.open('GET', serverUrlFlag, true);
+xhr.send();
+
+</script>
