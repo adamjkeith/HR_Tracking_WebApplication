@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en-UK">
+<head>
+  <meta charset="utf-8">
+  <title>Admin Panel</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="logo.ico" type="image/x-icon">
+  <style>
+    body {
+      background-color: white;
+      color: black;
+      font-family: Arial, sans-serif;
+      font-size: 18px;
+      display: -ms-flexbox;
+      display: flex;
+      -ms-flex-direction: column;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+      padding: 0;
+    }
+
+    .change-password-container {
+      width: 80%; /* Adjust the width as needed */
+      max-width: 500px;
+      margin: 0 auto;
+      padding: 20px;
+      border: 1px solid lightgray;
+      border-radius: 5px;
+      background-color: white;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+      color: red;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .logo {
+      width: 80%; /* Adjust the width as needed */
+      max-width: 300px;
+      display: block;
+      margin: 0 auto;
+      margin-bottom: 20px;
+    }
+
+    .input-label {
+      display: block;
+      margin-bottom: 10px;
+      font-size: 16px;
+      font-weight: bold;
+    }
+
+    .input-container {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+
+    .input-field {
+      width: 100%;
+      max-width: 400px; /* Adjust the max-width as needed */
+      padding: 10px;
+      font-size: 16px;
+      border: 1px solid lightgray;
+      border-radius: 5px;
+    }
+
+    .button-container {
+      display: flex;
+      justify-content: center;
+      margin-top: 20px;
+    }
+
+    .submit-button,
+    .back-button {
+      background-color: red;
+      color: white;
+      padding: 15px 30px;
+      border: none;
+      border-radius: 5px;
+      text-decoration: none;
+      font-weight: bold;
+      transition: background-color 0.3s ease, cursor 0.3s ease;
+      cursor: pointer;
+      font-size: 18px;
+    }
+
+    .submit-button:hover,
+    .back-button:hover {
+      background-color: darkred;
+    }
+
+    .back-button {
+      position: absolute;
+      top: 4%;
+      left: 5%;
+    }
+
+    .error-message {
+      color: red;
+      font-size: 14px;
+      margin-top: 5px;
+      text-align: center;
+    }
+
+    @keyframes fadeOutAnimation {
+      from {
+        opacity: 1;
+      }
+      to {
+        opacity: 0;
+      }
+    }
+
+    .fade-out {
+      animation: fadeOutAnimation 0.5s ease;
+      animation-fill-mode: forwards; /* Keep the opacity at 0 after the animation ends */
+    }
+
+    @keyframes fadeInAnimation {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+
+    .fade-in {
+      animation: fadeInAnimation 0.5s ease;
+    }
+
+    /* New CSS styles for staff members list */
+    .staff-container {
+      width: 80%; /* Adjust the width as needed */
+      max-width: 500px;
+      margin: 20px auto;
+      padding: 20px;
+      border: 1px solid lightgray;
+      border-radius: 5px;
+      background-color: white;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .staff-container h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .staff-container ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .staff-container li {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px;
+      border-bottom: 1px solid lightgray;
+    }
+
+    .change-password-container button,
+    .staff-container button {
+      background-color: red;
+      color: white;
+      padding: 8px 16px;
+      border: none;
+      border-radius: 5px;
+      text-decoration: none;
+      font-weight: bold;
+      transition: background-color 0.3s ease, cursor 0.3s ease;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+
+    .change-password-container button{
+      margin-left: 36%;
+    }
+
+    .change-password-container button:hover,
+    .staff-container button:hover {
+      background-color: darkred;
+    }
+  </style>
+</head>
+<body>
+  <a href="#" class="back-button" onclick="fadeOutScreen('../index.php')">Back</a>
+  <div class="change-password-container">
+    <img src="logo.png" alt="Logo" class="logo">
+    <h1>Admin Panel</h1>
+    <button onclick="fadeOutScreen('../adminPanel/sManage.html')">Manage Staff</button>
+    <br>
+    <br>
+    <button onclick="resetTerms()">Revoke Terms & Conditions (ALL)</button>
+    <br>
+    <br>
+    <button onclick="resetPass()">Requst Password Change (ALL)</button>
+  </div>
+
+  <div class="staff-container">
+    <h2>Staff Members</h2>
+    <ul id="staff-list">
+      <!-- Staff members will be dynamically added here -->
+    </ul>
+  </div>
+
+  <script>
+    function setCookie(name, value) {
+      document.cookie = name + '=' + encodeURIComponent(value) + '; path=/';
+    }
+
+    function getStaffMembers() {
+      const staffList = document.getElementById('staff-list');
+      staffList.innerHTML = ''; // Clear any previous data
+
+      // Send AJAX request to get_staff.php
+      const xhr = new XMLHttpRequest();
+      xhr.open('GET', 'get_staff.php', true);
+      xhr.onreadystatechange = function () {
+        if (xhr.readyState === XMLHttpRequest.DONE) {
+          if (xhr.status === 200) {
+            const staffData = JSON.parse(xhr.responseText);
+            staffData.forEach(function (staff) {
+              // Create a list item for each staff member with the "Change Password" button
+              const listItem = document.createElement('li');
+              listItem.textContent = staff;
+
+              const changePasswordButton = document.createElement('button');
+              changePasswordButton.textContent = 'Change Password';
+
+              const adminButton = document.createElement('button');
+              adminButton.textContent = 'Permissions';
+              
+
+              // Add a click event listener to the button
+              changePasswordButton.addEventListener('click', function () {
+                // Set the 'staffPass' cookie with the value of the matching username
+                setCookie('staffPass', staff);
+                fadeOutScreen('staffChange.html')
+              });
+
+              adminButton.addEventListener('click', function () {
+                // Set the 'staffPass' cookie with the value of the matching username
+                setCookie('staffPass', staff);
+                fadeOutScreen('adminChange.html')
+              });
+
+              listItem.appendChild(changePasswordButton);
+              listItem.appendChild(adminButton);
+              staffList.appendChild(listItem);
+            });
+          } else {
+            console.error('Error while fetching staff members.');
+          }
+        }
+      };
+
+      xhr.send();
+    }
+
+    // Call the function to get and display staff members when the DOM is loaded
+    document.addEventListener('DOMContentLoaded', function () {
+      getStaffMembers();
+      document.body.classList.add('fade-in');
+    });
+
+
+
+    function fadeOutScreen(url) {
+      // Add the "fade-out" class to the body element to start the fade-out animation
+      document.body.classList.add('fade-out');
+
+      // After the animation ends, redirect to the specified URL
+      setTimeout(function() {
+        window.location.href = url;
+      });
+    }
+
+
+
+    var userIDValue = getCookie("userID");
+        if (userIDValue == undefined) {
+          window.location.href = 'http://10.134.33.199:8080/';
+        }
+
+        function getCookie(name) {
+            var value = "; " + document.cookie;
+            var parts = value.split("; " + name + "=");
+            if (parts.length === 2) return parts.pop().split(";").shift();
+        }
+
+
+        function resetTerms() {
+            // Create an XMLHttpRequest object
+            var xhr = new XMLHttpRequest();
+
+            // Configure the AJAX request
+            xhr.open('GET', 'resetTC.php', true);
+
+            // Set up a callback function to handle the response
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === XMLHttpRequest.DONE) {
+                    if (xhr.status === 200) {
+                        alert(xhr.responseText);
+                    } else {
+                        alert('Error: ' + xhr.status);
+                    }
+                }
+            };
+
+            // Send the AJAX request
+            xhr.send();
+        }
+
+        function resetPass() {
+            // Create an XMLHttpRequest object
+            var xhr = new XMLHttpRequest();
+
+            // Configure the AJAX request
+            xhr.open('GET', 'resetTC.php', true);
+
+            // Set up a callback function to handle the response
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === XMLHttpRequest.DONE) {
+                    if (xhr.status === 200) {
+                        alert(xhr.responseText);
+                    } else {
+                        alert('Error: ' + xhr.status);
+                    }
+                }
+            };
+
+            // Send the AJAX request
+            xhr.send();
+        }
+
+  </script>
+
+</body>
+</html>
