@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<html>
+<head>
+    <title>Main Menu</title>
+    <link rel="icon" href="logo.ico" type="image/x-icon">
+    <style>
+        body {
+            background-color: lightgray;
+            font-family: Arial, sans-serif;
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            /* Styles for phones and small tablets */
+            .coin-pile {
+                width: 300px;
+                height: 300px;
+            }
+
+            .title-image {
+                width: 300px;
+                top: 40px;
+            }
+        }
+
+        @media (min-width: 769px) and (max-width: 1024px) {
+            /* Styles for medium tablets */
+            .coin-pile {
+                width: 450px;
+                height: 450px;
+            }
+
+            .title-image {
+                width: 450px;
+                top: 60px;
+            }
+        }
+
+        /* Common Styles */
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #fff;
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+
+        .coin-pile {
+            position: relative;
+            width: 600px;
+            height: 600px;
+            background-image: url('coin_pile.png');
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            top: 150px;
+        }
+
+        .coin-pile-light {
+            position: absolute;
+            left: 0;
+            width: 100%;
+            height: 0;
+            background-image: url('coin_pile_light.png');
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            animation: reveal 2s linear forwards;
+        }
+
+        .loading-bar {
+            width: 80%;
+            height: 20px;
+            background-color: #f2f2f2;
+            border: 1px solid #ccc;
+            margin-top: 20px;
+            position: relative;
+        }
+
+        .loading-progress {
+            width: 0;
+            height: 100%;
+            background-color: red;
+            text-align: center;
+            color: white;
+            line-height: 20px;
+            position: absolute;
+        }
+
+        @keyframes reveal {
+            0% {
+                height: 0;
+            }
+            100% {
+                height: 100%;
+            }
+        }
+
+        .tracker-content {
+            display: none;
+        }
+
+        .tracker-content.visible {
+            display: block;
+        }
+
+        .tracker-content h1 {
+            color: red;
+            text-align: center;
+        }
+
+        .tracker-content table {
+            margin: 0 auto;
+            border-collapse: collapse;
+        }
+
+        .tracker-content th,
+        .tracker-content td {
+            padding: 10px;
+            text-align: center;
+        }
+
+        .tracker-content th {
+            background-color: red;
+            color: white;
+        }
+
+        .tracker-content td {
+            background-color: white;
+        }
+
+        @keyframes fade-in {
+            0% {
+                opacity: 0;
+            }
+            100% {
+                opacity: 1;
+            }
+        }
+
+        .title-image {
+            position: absolute;
+            top: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 650px;
+            opacity: 0;
+            animation: fade-in 2s forwards;
+            animation-delay: 2s;
+        }
+    </style>
+</head>
+<body>
+    <div class="loading-screen">
+        <div class="coin-pile">
+            <div class="coin-pile-light"></div>
+        </div>
+        <div class="loading-bar">
+            <div class="loading-progress">0%</div>
+        </div>
+        <img class="title-image" src="Title.png" alt="Title Image">
+    </div>
+
+    <div class="tracker-content">
+        <h1>Holiday Tracker</h1>
+        <table>
+            <tr>
+                <th>Date</th>
+                <th>Holiday</th>
+            </tr>
+            <tr>
+                <td>January 1</td>
+                <td>New Year's Day</td>
+            </tr>
+            <tr>
+                <td>February 14</td>
+                <td>Valentine's Day</td>
+            </tr>
+            <tr>
+                <td>December 25</td>
+                <td>Christmas Day</td>
+            </tr>
+        </table>
+    </div>
+    <script>
+
+        window.addEventListener('load', function () {
+
+            var progressBar = document.querySelector('.loading-progress');
+            var progress = 0;
+            var intervalId = setInterval(function () {
+                progress++;
+                progressBar.style.width = progress + '%';
+                progressBar.textContent = progress + '%';
+
+                if (progress >= 100) {
+                    clearInterval(intervalId);
+                    setTimeout(function () {
+
+                        window.location.href = '../../en/flightTracker/index.php';
+
+                    }, 2000);
+                }
+            }, 20);
+        });
+
+        var userIDValue = getCookie("userID");
+        if (userIDValue == undefined) {
+          window.location.href = 'login screen';
+        }
+
+        function getCookie(name) {
+            var value = "; " + document.cookie;
+            var parts = value.split("; " + name + "=");
+            if (parts.length === 2) return parts.pop().split(";").shift();
+        }
+
+    </script>
+
+</body>
+</html>
